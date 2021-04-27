@@ -11,7 +11,7 @@ local FIRST_NUMBER_CAP_NO_SPACE = "к";
 
 local CONFIG = {
     remainder = 1,
-}
+};
 ---------------------------------------------------------
 local NUMBER_ABBREVIATION_DATA = {
     -- Order these from largest to smallest
@@ -24,7 +24,7 @@ local NUMBER_ABBREVIATION_DATA = {
     { breakpoint = 1000000,          abbreviation = SECOND_NUMBER_CAP_NO_SPACE,       significandDivisor = 100000,         fractionDivisor = 10 },
     { breakpoint = 10000,            abbreviation = FIRST_NUMBER_CAP_NO_SPACE,        significandDivisor = 1000,           fractionDivisor = 1  },
     { breakpoint = 1000,             abbreviation = FIRST_NUMBER_CAP_NO_SPACE,        significandDivisor = 100,            fractionDivisor = 10 },
-}
+};
 
 local function FinalValueWithRemainder(remainder, value, data)
     local number = (value / data.significandDivisor) % data.fractionDivisor;
@@ -79,11 +79,11 @@ local function Abbreviated_UpdateTextString(self)
         statusTextPercentage:Hide();
     end
 
-    if ( not statustext or not statustext:IsShown() ) then
+    if ( ( not statustext ) or ( not statustext:IsShown() ) ) then
         return;
     end
 
-    statustext:Show();
+    statustext:SetAlpha(1);
     statustext:ClearAllPoints();
     statustext:SetPoint("CENTER", self, "CENTER");
 
@@ -92,7 +92,7 @@ local function Abbreviated_UpdateTextString(self)
         if ( health ) then
             statustext:SetText(DEAD);
         else
-            statustext:Hide();
+            statustext:SetAlpha(0);
         end
     elseif ( unit and not UnitIsConnected(unit) ) then
         statustext:SetText(PLAYER_OFFLINE);
@@ -103,7 +103,7 @@ local function Abbreviated_UpdateTextString(self)
         end
         statustext:SetText(stringText);
     else
-        statustext:Hide();
+        statustext:SetAlpha(0);
     end
 
 end
