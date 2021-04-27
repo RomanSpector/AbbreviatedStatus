@@ -51,7 +51,7 @@ local function AbbreviateNumbers(value, remainder )
 end
 
 local function Abbreviated_UpdateTextString(self)
-    local _,max = self:GetMinMaxValues();
+    local _, valueMax = self:GetMinMaxValues();
     local value = self:GetValue();
     local unit = self.unit;
     local statustext = self.TextString;
@@ -60,7 +60,7 @@ local function Abbreviated_UpdateTextString(self)
     local statusTextPercentage = self.TextPercent;
 
     if ( cvarPerc and value > 0 ) then
-        local percentText = string.format("%.f%%", value/max*100);
+        local percentText = string.format("%.f%%", value/valueMax*100);
 
         if ( not statusTextPercentage ) then
             self.TextPercent = self:CreateFontString("$parentTextPercent", "ATWORK", "TextStatusBarText");
@@ -71,8 +71,14 @@ local function Abbreviated_UpdateTextString(self)
             statusTextPercentage:Hide();
         else
             statusTextPercentage:Show();
-            statusTextPercentage:SetPoint("LEFT", 10, 0);
+            statusTextPercentage:ClearAllPoints();
             statusTextPercentage:SetText(percentText);
+
+            if ( statustext and not statustext:IsShown() ) then
+                statusTextPercentage:SetPoint("CENTER");
+            else
+                statusTextPercentage:SetPoint("LEFT", 10, 0);
+            end
         end
 
     elseif ( statusTextPercentage ) then
@@ -87,15 +93,15 @@ local function Abbreviated_UpdateTextString(self)
     statustext:ClearAllPoints();
     statustext:SetPoint("CENTER", self, "CENTER");
 
-    if ( unit and UnitIsDeadOrGhost(unit) ) then
-        local health = (statustext:GetName() or ""):match("Health");
-        if ( health ) then
-            statustext:SetText(DEAD);
-        else
-            statustext:SetAlpha(0);
-        end
-    elseif ( unit and not UnitIsConnected(unit) ) then
+    if ( unit and not UnitIsConnected(unit) ) then
         statustext:SetText(PLAYER_OFFLINE);
+    elseif ( unit and UnitIsDeadOrGhost(unit) ) then
+            local health = (statustext:GetName() or ""):match("Health");
+            if ( health ) then
+                statustext:SetText(DEAD);
+            else
+                statustext:SetAlpha(0);
+            end
     elseif ( value > 0 ) then
         if ( cvarPerc ) then
             statustext:ClearAllPoints();

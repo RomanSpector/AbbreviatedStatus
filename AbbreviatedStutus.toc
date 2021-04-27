@@ -2,6 +2,6 @@
 ## Title: Abbreviated Stutus Text
 ## Author: RomanSpector 
 ## Version: 1.0
-## Notes: Замена стандарного отображения текста здоровья и маны.
+## Notes: Замена стандартного отображения текста здоровья и маны.
 
 AbbreviatedStutus.lua
