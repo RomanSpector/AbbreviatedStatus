@@ -57,38 +57,41 @@ local function Abbreviated_UpdateTextString(self)
     local statustext = self.TextString;
     local stringText = AbbreviateNumbers(value, CONFIG.remainder);
     local cvarPerc = GetCVarBool("statusTextPercentage");
-    local statusTextPercentage = self.TextPercent;
+    local statustextPercentage = self.TextPercent and self.TextPercent.text;
 
     if ( cvarPerc and value > 0 ) then
         local percentText = string.format("%.f%%", value/valueMax*100);
 
-        if ( not statusTextPercentage ) then
-            self.TextPercent = self:CreateFontString("$parentTextPercent", "ATWORK", "TextStatusBarText");
-            statusTextPercentage = self.TextPercent;
+        if ( not statustextPercentage ) then
+            self.TextPercent = CreateFrame("Frame", "$parentTextPercent", self, "TextStatusBarTextPercentTemplate")
+            self.TextPercent:SetFrameLevel(self:GetFrameLevel() + 1)
+            self.TextPercent:SetAllPoints();
+            --self.TextPercent = self:CreateFontString("$parentTextPercent", "BACKGOUND", "TextStatusBarText");
+            statustextPercentage = self.TextPercent.text;
         end
 
         if ( unit and UnitIsDeadOrGhost(unit) or ( unit and not UnitIsConnected(unit) ) ) then
-            statusTextPercentage:Hide();
+            statustextPercentage:Hide();
         else
-            statusTextPercentage:Show();
-            statusTextPercentage:ClearAllPoints();
-            statusTextPercentage:SetText(percentText);
+            statustextPercentage:Show();
+            statustextPercentage:ClearAllPoints();
+            statustextPercentage:SetText(percentText);
 
             if ( statustext and not statustext:IsShown() ) then
-                statusTextPercentage:SetPoint("CENTER");
+                statustextPercentage:SetPoint("CENTER");
             else
-                statusTextPercentage:SetPoint("LEFT", 10, 0);
+                statustextPercentage:SetPoint("LEFT", 10, 0);
             end
         end
 
-    elseif ( statusTextPercentage ) then
-        statusTextPercentage:Hide();
+    elseif ( statustextPercentage ) then
+        statustextPercentage:Hide();
     end
 
     if ( ( not statustext ) or ( not statustext:IsShown() ) ) then
         return;
     end
-
+ 
     statustext:SetAlpha(1);
     statustext:ClearAllPoints();
     statustext:SetPoint("CENTER", self, "CENTER");

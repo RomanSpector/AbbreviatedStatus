@@ -4,4 +4,5 @@
 ## Version: 1.0
 ## Notes: Замена стандартного отображения текста здоровья и маны.
 
+AbbreviatedStutus.xml
 AbbreviatedStutus.lua
