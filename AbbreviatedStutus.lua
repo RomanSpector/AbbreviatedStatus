@@ -4,10 +4,17 @@ local GetCVarBool = GetCVarBool;
 local PLAYER_OFFLINE =  PLAYER_OFFLINE;
 local DEAD = DEAD;
 
-local FOURTH_NUMBER_CAP_NO_SPACE = "T";
-local THIRD_NUMBER_CAP_NO_SPACE = "МЛРД";
-local SECOND_NUMBER_CAP_NO_SPACE = "М";
-local FIRST_NUMBER_CAP_NO_SPACE = "к";
+if ( GetLocale() == "ruRU" ) then
+    FOURTH_NUMBER_CAP_NO_SPACE = "T";
+    THIRD_NUMBER_CAP_NO_SPACE = "МЛРД";
+    SECOND_NUMBER_CAP_NO_SPACE = "М";
+    FIRST_NUMBER_CAP_NO_SPACE = "к";
+else
+    FOURTH_NUMBER_CAP_NO_SPACE = "T";
+    THIRD_NUMBER_CAP_NO_SPACE = "B";
+    SECOND_NUMBER_CAP_NO_SPACE = "M";
+    FIRST_NUMBER_CAP_NO_SPACE = "K";
+end
 
 local CONFIG = {
     remainder = 1,
@@ -66,7 +73,6 @@ local function Abbreviated_UpdateTextString(self)
             self.TextPercent = CreateFrame("Frame", "$parentTextPercent", self, "TextStatusBarTextPercentTemplate")
             self.TextPercent:SetFrameLevel(self:GetFrameLevel() + 1)
             self.TextPercent:SetAllPoints();
-            --self.TextPercent = self:CreateFontString("$parentTextPercent", "BACKGOUND", "TextStatusBarText");
             statustextPercentage = self.TextPercent.text;
         end
 
@@ -91,7 +97,7 @@ local function Abbreviated_UpdateTextString(self)
     if ( ( not statustext ) or ( not statustext:IsShown() ) ) then
         return;
     end
- 
+
     statustext:SetAlpha(1);
     statustext:ClearAllPoints();
     statustext:SetPoint("CENTER", self, "CENTER");
