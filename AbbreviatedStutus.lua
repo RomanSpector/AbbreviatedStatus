@@ -18,7 +18,7 @@ end
 
 local CONFIG = {
     remainder = 1,
-    showManaBar = false,
+    showManaBar = true,
     showHealthBar = true,
     precXoffSet = 5,
 };
@@ -56,8 +56,8 @@ local function AbbreviateNumbers(value, remainder )
 end
 
 local function IsArenaOrPetFrame(frame)
-    local name = frame:GetName()
-    return name:match("Pet") or name:match("Arena")
+    local name = frame:GetName();
+    return name:match("Pet") or name:match("Arena");
 end
 
 local function GetStatusBarType(bar)
@@ -73,12 +73,12 @@ local function SetPosition(frame, point, relativeTo, relativePoint, ofsx, ofsy)
 
     if ( IsArenaOrPetFrame(frame) ) then
         if ( barType == "HealthBar" ) then
-            frame:SetPoint(point, relativeTo, relativePoint, ofsx or 0, ofsy or 0.5)
+            frame:SetPoint(point, relativeTo, relativePoint, ofsx or 0, ofsy or 0.5);
         else
-            frame:SetPoint(point, relativeTo, relativePoint, ofsx or 0, ofsy or -1.5)
+            frame:SetPoint(point, relativeTo, relativePoint, ofsx or 0, ofsy or -1.5);
         end
     else
-        frame:SetPoint(point, relativeTo, relativePoint, ofsx or 0, ofsy or 0)
+        frame:SetPoint(point, relativeTo, relativePoint, ofsx or 0, ofsy or 0);
     end
 end
 
@@ -98,8 +98,8 @@ local function Abbreviated_UpdateTextString(self)
         local percentText = string.format("%.f%%", value/valueMax*100);
 
         if ( not statustextPercentage ) then
-            self.TextPercent = CreateFrame("Frame", "$parentTextPercent", self, "TextStatusBarTextPercentTemplate")
-            self.TextPercent:SetFrameLevel(self:GetFrameLevel() + 1)
+            self.TextPercent = CreateFrame("Frame", "$parentTextPercent", self, "TextStatusBarTextPercentTemplate");
+            self.TextPercent:SetFrameLevel(self:GetFrameLevel() + 1);
             self.TextPercent:SetAllPoints();
             statustextPercentage = self.TextPercent.text;
         end
@@ -139,7 +139,7 @@ local function Abbreviated_UpdateTextString(self)
     local health = (statustext:GetName() or ""):match("Health");
     statustext:SetAlpha(1);
     statustext:ClearAllPoints();
-    SetPosition(statustext, "CENTER", self, "CENTER")
+    SetPosition(statustext, "CENTER", self, "CENTER");
 
     if ( unit and not UnitIsConnected(unit) ) then
         statustext:SetText(PLAYER_OFFLINE);
@@ -152,7 +152,7 @@ local function Abbreviated_UpdateTextString(self)
     elseif ( value > 0 ) then
         if ( cvarPerc ) then
             statustext:ClearAllPoints();
-            SetPosition(statustext, "RIGHT", self, "RIGHT", -5)
+            SetPosition(statustext, "RIGHT", self, "RIGHT", -5);
         end
         statustext:SetText(stringText);
     else
