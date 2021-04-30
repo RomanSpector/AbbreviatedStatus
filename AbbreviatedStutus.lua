@@ -18,6 +18,9 @@ end
 
 local CONFIG = {
     remainder = 1,
+    showManaBar = false,
+    showHealthBar = true,
+    precXoffSet = 5,
 };
 ---------------------------------------------------------
 local NUMBER_ABBREVIATION_DATA = {
@@ -34,12 +37,7 @@ local NUMBER_ABBREVIATION_DATA = {
 };
 
 local function FinalValueWithRemainder(remainder, value, data)
-    local number = (value / data.significandDivisor) % data.fractionDivisor;
-    if ( number > 0.1 ) then
-        return string.format("%."..remainder.."f", (value / data.significandDivisor) / data.fractionDivisor);
-    else
-        return string.format("%.f", (value / data.significandDivisor) / data.fractionDivisor);
-    end
+    return string.format("%."..remainder.."f", (value / data.significandDivisor) / data.fractionDivisor);
 end
 
 local function AbbreviateNumbers(value, remainder )
@@ -57,6 +55,33 @@ local function AbbreviateNumbers(value, remainder )
     return tostring(value);
 end
 
+local function IsArenaOrPetFrame(frame)
+    local name = frame:GetName()
+    return name:match("Pet") or name:match("Arena")
+end
+
+local function GetStatusBarType(bar)
+    if ( ( not bar ) or ( not bar.GetName ) ) then
+        return;
+    end
+
+    return (bar:GetName()):match("HealthBar") or "ManaBar";
+end
+
+local function SetPosition(frame, point, relativeTo, relativePoint, ofsx, ofsy)
+    local barType = GetStatusBarType(frame);
+
+    if ( IsArenaOrPetFrame(frame) ) then
+        if ( barType == "HealthBar" ) then
+            frame:SetPoint(point, relativeTo, relativePoint, ofsx or 0, ofsy or 0.5)
+        else
+            frame:SetPoint(point, relativeTo, relativePoint, ofsx or 0, ofsy or -1.5)
+        end
+    else
+        frame:SetPoint(point, relativeTo, relativePoint, ofsx or 0, ofsy or 0)
+    end
+end
+
 local function Abbreviated_UpdateTextString(self)
     local _, valueMax = self:GetMinMaxValues();
     local value = self:GetValue();
@@ -65,8 +90,11 @@ local function Abbreviated_UpdateTextString(self)
     local stringText = AbbreviateNumbers(value, CONFIG.remainder);
     local cvarPerc = GetCVarBool("statusTextPercentage");
     local statustextPercentage = self.TextPercent and self.TextPercent.text;
+    local cvarStatusText = GetCVarBool(self.cvar or "");
 
     if ( cvarPerc and value > 0 ) then
+
+        local barType = GetStatusBarType(self);
         local percentText = string.format("%.f%%", value/valueMax*100);
 
         if ( not statustextPercentage ) then
@@ -84,10 +112,20 @@ local function Abbreviated_UpdateTextString(self)
             statustextPercentage:SetText(percentText);
 
             if ( statustext and not statustext:IsShown() ) then
-                statustextPercentage:SetPoint("CENTER");
+                SetPosition(statustextPercentage, "CENTER", self, "CENTER")
             else
-                statustextPercentage:SetPoint("LEFT", 10, 0);
+                SetPosition(statustextPercentage, "LEFT", self, "LEFT", CONFIG.precXoffSet)
             end
+        end
+
+        if ( CONFIG["show"..barType] or not cvarStatusText ) then
+            if ( unit and UnitIsDeadOrGhost(unit) ) then
+                statustextPercentage:Hide();
+            else
+                statustextPercentage:Show();
+            end
+        else
+            statustextPercentage:Hide();
         end
 
     elseif ( statustextPercentage ) then
@@ -98,14 +136,14 @@ local function Abbreviated_UpdateTextString(self)
         return;
     end
 
+    local health = (statustext:GetName() or ""):match("Health");
     statustext:SetAlpha(1);
     statustext:ClearAllPoints();
-    statustext:SetPoint("CENTER", self, "CENTER");
+    SetPosition(statustext, "CENTER", self, "CENTER")
 
     if ( unit and not UnitIsConnected(unit) ) then
         statustext:SetText(PLAYER_OFFLINE);
     elseif ( unit and UnitIsDeadOrGhost(unit) ) then
-            local health = (statustext:GetName() or ""):match("Health");
             if ( health ) then
                 statustext:SetText(DEAD);
             else
@@ -114,7 +152,7 @@ local function Abbreviated_UpdateTextString(self)
     elseif ( value > 0 ) then
         if ( cvarPerc ) then
             statustext:ClearAllPoints();
-            statustext:SetPoint("RIGHT", self, "RIGHT", -5, 0);
+            SetPosition(statustext, "RIGHT", self, "RIGHT", -5)
         end
         statustext:SetText(stringText);
     else

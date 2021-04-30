@@ -4,7 +4,7 @@
   <Frame name="TextStatusBarTextPercentTemplate" virtual="true">
     <Layers>
       <Layer level="BACKGOUND">
-        <FontString name="$parentHealthBarTextPercent" parentKey="text" inherits="TextStatusBarText">
+        <FontString name="$parentText" parentKey="text" inherits="TextStatusBarText">
           <Anchors>
             <Anchor point="CENTER">
               <Offset>
