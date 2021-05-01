@@ -24,12 +24,12 @@ local CONFIG = {
 
     position = {
         ["Pet"] = {
-            ["HealthBar"] = { ofsy = 0.5 },
+            ["HealthBar"] = { ofsy = 0 },
             ["ManaBar"] = { ofsy = -1.5 },
         },
         ["Arena"] = {
-            ["HealthBar"] = { ofsy = 0.5 },
-            ["ManaBar"] = { ofsy = 0.5 },
+            ["HealthBar"] = { ofsy = 2.5 },
+            ["ManaBar"] = { ofsy = 1 },
         }
     },
 };
