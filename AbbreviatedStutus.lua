@@ -112,9 +112,9 @@ local function Abbreviated_UpdateTextString(self)
             statustextPercentage:SetText(percentText);
 
             if ( statustext and not statustext:IsShown() ) then
-                SetPosition(statustextPercentage, "CENTER", self, "CENTER")
+                SetPosition(statustextPercentage, "CENTER", self, "CENTER");
             else
-                SetPosition(statustextPercentage, "LEFT", self, "LEFT", CONFIG.precXoffSet)
+                SetPosition(statustextPercentage, "LEFT", self, "LEFT", CONFIG.precXoffSet);
             end
         end
 
