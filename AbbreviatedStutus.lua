@@ -21,6 +21,17 @@ local CONFIG = {
     showManaBar = true, -- display % text on manabar when the text status is enabled
     showHealthBar = true, -- display % text on healthbar when the text status is enabled
     precXoffSet = 5, -- offset from the left edge
+
+    position = {
+        ["Pet"] = {
+            ["HealthBar"] = { ofsy = 0.5 },
+            ["ManaBar"] = { ofsy = -1.5 },
+        },
+        ["Arena"] = {
+            ["HealthBar"] = { ofsy = 0.5 },
+            ["ManaBar"] = { ofsy = 0.5 },
+        }
+    },
 };
 ---------------------------------------------------------
 local NUMBER_ABBREVIATION_DATA = {
@@ -70,13 +81,11 @@ end
 
 local function SetPosition(frame, point, relativeTo, relativePoint, ofsx, ofsy)
     local barType = GetStatusBarType(frame);
+    local arenaOrPetFrame = IsArenaOrPetFrame(frame);
+    local setting = CONFIG.position
 
-    if ( IsArenaOrPetFrame(frame) ) then
-        if ( barType == "HealthBar" ) then
-            frame:SetPoint(point, relativeTo, relativePoint, ofsx or 0, ofsy or 0.5);
-        else
-            frame:SetPoint(point, relativeTo, relativePoint, ofsx or 0, ofsy or -1.5);
-        end
+    if ( arenaOrPetFrame ) then
+        frame:SetPoint(point, relativeTo, relativePoint, ofsx or 0, ofsy or setting[arenaOrPetFrame][barType].ofsy);
     else
         frame:SetPoint(point, relativeTo, relativePoint, ofsx or 0, ofsy or 0);
     end
