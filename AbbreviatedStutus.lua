@@ -17,10 +17,10 @@ else
 end
 
 local CONFIG = {
-    remainder = 1,
-    showManaBar = true,
-    showHealthBar = true,
-    precXoffSet = 5,
+    remainder = 1, -- digits after the decimal point
+    showManaBar = true, -- display % text on manabar when the text status is enabled
+    showHealthBar = true, -- display % text on healthbar when the text status is enabled
+    precXoffSet = 5, -- offset from the left edge
 };
 ---------------------------------------------------------
 local NUMBER_ABBREVIATION_DATA = {
