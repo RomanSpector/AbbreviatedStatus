@@ -51,7 +51,7 @@ local function FinalValueWithRemainder(remainder, value, data)
     return string.format("%."..remainder.."f", (value / data.significandDivisor) / data.fractionDivisor);
 end
 
-local function AbbreviateNumbers(value, remainder )
+function AbbreviateNumbers(value, remainder )
     for i, data in ipairs(NUMBER_ABBREVIATION_DATA) do
         if ( value >= data.breakpoint ) then
             local finalValue;
