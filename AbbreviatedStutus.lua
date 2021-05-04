@@ -22,7 +22,7 @@ local CONFIG = {
     showHealthBar = true, -- display % text on healthbar when the text status is enabled
     precXoffSet = 5, -- offset from the left edge
 
-    position = {
+    position = { -- fix ArenaFrame and PetFrame position on the Y axis
         ["Pet"] = {
             ["HealthBar"] = { ofsy = 0 },
             ["ManaBar"] = { ofsy = -1.5 },
@@ -113,22 +113,18 @@ local function Abbreviated_UpdateTextString(self)
             statustextPercentage = self.TextPercent.text;
         end
 
-        if ( unit and UnitIsDeadOrGhost(unit) or ( unit and not UnitIsConnected(unit) ) ) then
-            statustextPercentage:Hide();
-        else
-            statustextPercentage:Show();
-            statustextPercentage:ClearAllPoints();
-            statustextPercentage:SetText(percentText);
+        statustextPercentage:Show();
+        statustextPercentage:ClearAllPoints();
+        statustextPercentage:SetText(percentText);
 
-            if ( statustext and not statustext:IsShown() ) then
-                SetPosition(statustextPercentage, "CENTER", self, "CENTER");
-            else
-                SetPosition(statustextPercentage, "LEFT", self, "LEFT", CONFIG.precXoffSet);
-            end
+        if ( statustext and not statustext:IsShown() ) then
+            SetPosition(statustextPercentage, "CENTER", self, "CENTER");
+        else
+            SetPosition(statustextPercentage, "LEFT", self, "LEFT", CONFIG.precXoffSet);
         end
 
         if ( CONFIG["show"..barType] or not cvarStatusText ) then
-            if ( unit and UnitIsDeadOrGhost(unit) ) then
+            if ( unit and ( UnitIsDeadOrGhost(unit) or not UnitIsConnected(unit) ) ) then
                 statustextPercentage:Hide();
             else
                 statustextPercentage:Show();
