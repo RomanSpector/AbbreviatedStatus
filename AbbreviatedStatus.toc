@@ -1,5 +1,5 @@
 ## Interface: 30300
-## Title: Abbreviated Stutus Text
+## Title: Abbreviated Status Text
 ## Author: RomanSpector 
 ## Version: 1.3
 ## Notes: Замена стандартного отображения текста здоровья и маны.
