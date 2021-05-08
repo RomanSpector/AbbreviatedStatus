@@ -23,15 +23,15 @@ local CONFIG = {
     precXoffSet = 5, -- offset from the left edge
 
     position = { -- fix ArenaFrame and PetFrame position on the Y axis
-        ["Pet"] = {
+        ["PetFrame"] = {
             ["HealthBar"] = { ofsy = 0 },
             ["ManaBar"] = { ofsy = -1.5 },
         },
-        ["Arena"] = {
+        ["ArenaFrame"] = {
             ["HealthBar"] = { ofsy = 2.5 },
             ["ManaBar"] = { ofsy = 1 },
         }
-    },
+    }
 };
 ---------------------------------------------------------
 local NUMBER_ABBREVIATION_DATA = {
@@ -68,7 +68,7 @@ end
 
 local function IsArenaOrPetFrame(frame)
     local name = frame:GetName();
-    return name:match("Pet") or name:match("Arena");
+    return name:match("PetFrame") or name:match("ArenaFrame");
 end
 
 local function GetStatusBarType(bar)
@@ -101,8 +101,9 @@ local function Abbreviated_UpdateTextString(self)
     local statustextPercentage = self.TextPercent and self.TextPercent.text;
     local cvarStatusText = GetCVarBool(self.cvar or "");
 
-    if ( cvarPerc and value > 0 ) then
-
+    if ( not cvarPerc and statustextPercentage ) then
+        statustextPercentage:Hide();
+    elseif ( cvarPerc and value > 0 ) then
         local barType = GetStatusBarType(self);
         local percentText = string.format("%.f%%", value/valueMax*100);
 
@@ -133,8 +134,6 @@ local function Abbreviated_UpdateTextString(self)
             statustextPercentage:Hide();
         end
 
-    elseif ( statustextPercentage ) then
-        statustextPercentage:Hide();
     end
 
     if ( ( not statustext ) or ( not statustext:IsShown() ) ) then
@@ -167,3 +166,4 @@ local function Abbreviated_UpdateTextString(self)
 end
 
 hooksecurefunc("TextStatusBar_UpdateTextString", Abbreviated_UpdateTextString);
+
