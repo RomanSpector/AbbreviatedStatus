@@ -101,9 +101,7 @@ local function Abbreviated_UpdateTextString(self)
     local statustextPercentage = self.TextPercent and self.TextPercent.text;
     local cvarStatusText = GetCVarBool(self.cvar or "");
 
-    if ( not cvarPerc and statustextPercentage ) then
-        statustextPercentage:Hide();
-    elseif ( cvarPerc and value > 0 ) then
+    if ( cvarPerc and value > 0 ) then
         local barType = GetStatusBarType(self);
         local percentText = string.format("%.f%%", value/valueMax*100);
 
@@ -133,7 +131,8 @@ local function Abbreviated_UpdateTextString(self)
         else
             statustextPercentage:Hide();
         end
-
+    elseif ( statustextPercentage ) then
+        statustextPercentage:Hide();
     end
 
     if ( ( not statustext ) or ( not statustext:IsShown() ) ) then
