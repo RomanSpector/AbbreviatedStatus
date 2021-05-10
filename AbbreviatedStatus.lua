@@ -6,12 +6,13 @@
 --######       My Discord: https://discord.gg/Fm9kgfk            #######
 ------------------------------------------------------------------------
 --######################################################################
-
+local _, ns = ...;
 local UnitIsDeadOrGhost = UnitIsDeadOrGhost;
 local UnitIsConnected = UnitIsConnected;
 local GetCVarBool = GetCVarBool;
 local PLAYER_OFFLINE =  PLAYER_OFFLINE;
 local DEAD = DEAD;
+local CONFIG = ns:GetConfig();
 
 if ( GetLocale() == "ruRU" ) then
     FOURTH_NUMBER_CAP_NO_SPACE = "T";
@@ -25,23 +26,7 @@ else
     FIRST_NUMBER_CAP_NO_SPACE = "K";
 end
 
-local CONFIG = {
-    remainder = 1, -- digits after the decimal point
-    showManaBar = true, -- display % text on manabar when the text status is enabled
-    showHealthBar = true, -- display % text on healthbar when the text status is enabled
-    precXoffSet = 5, -- offset from the left edge
 
-    position = { -- fix ArenaFrame and PetFrame position on the Y axis
-        ["PetFrame"] = {
-            ["HealthBar"] = { ofsy = 0 },
-            ["ManaBar"] = { ofsy = -1.5 },
-        },
-        ["ArenaFrame"] = {
-            ["HealthBar"] = { ofsy = 2.5 },
-            ["ManaBar"] = { ofsy = 1 },
-        }
-    }
-};
 ---------------------------------------------------------
 local NUMBER_ABBREVIATION_DATA = {
     -- Order these from largest to smallest
@@ -75,28 +60,34 @@ function AbbreviateNumbers(value, remainder )
     return tostring(value);
 end
 
-local function IsArenaOrPetFrame(frame)
-    local name = frame:GetName();
-    return name:match("PetFrame") or name:match("ArenaFrame");
+local function GetFrameType(frame)
+    local typeFrame = (frame:GetName()):match("(%u%l+Frame)");
+    return typeFrame;
 end
 
 local function GetStatusBarType(bar)
-    if ( ( not bar ) or ( not bar.GetName ) ) then
+    if not ( bar and bar.GetName ) then
         return;
     end
 
     return (bar:GetName()):match("HealthBar") or "ManaBar";
 end
 
+local function GetTextType(frame)
+    return (frame:GetName()):match("Percent") or "Status";
+end
+
 local function SetPosition(frame, point, relativeTo, relativePoint, ofsx, ofsy)
     local barType = GetStatusBarType(frame);
-    local arenaOrPetFrame = IsArenaOrPetFrame(frame);
+    local frameType = GetFrameType(frame);
+    local textType = GetTextType(frame);
     local setting = CONFIG.position
 
-    if ( arenaOrPetFrame ) then
-        frame:SetPoint(point, relativeTo, relativePoint, ofsx or 0, ofsy or setting[arenaOrPetFrame][barType].ofsy);
-    else
-        frame:SetPoint(point, relativeTo, relativePoint, ofsx or 0, ofsy or 0);
+    if ( frameType ) then
+        local xOff = setting[frameType][textType][barType].ofsx;
+        local yOff = setting[frameType][textType][barType].ofsy;
+
+        frame:SetPoint(point, relativeTo, relativePoint, ofsx or xOff, ofsy or yOff);
     end
 end
 
@@ -128,7 +119,7 @@ local function Abbreviated_UpdateTextString(self)
         if ( statustext and not statustext:IsShown() ) then
             SetPosition(statustextPercentage, "CENTER", self, "CENTER");
         else
-            SetPosition(statustextPercentage, "LEFT", self, "LEFT", CONFIG.precXoffSet);
+            SetPosition(statustextPercentage, "LEFT", self, "LEFT");
         end
 
         if ( CONFIG["show"..barType] or not cvarStatusText ) then
@@ -164,7 +155,7 @@ local function Abbreviated_UpdateTextString(self)
     elseif ( value > 0 ) then
         if ( cvarPerc ) then
             statustext:ClearAllPoints();
-            SetPosition(statustext, "RIGHT", self, "RIGHT", -5);
+            SetPosition(statustext, "RIGHT", self, "RIGHT");
         end
         statustext:SetText(stringText);
     else
