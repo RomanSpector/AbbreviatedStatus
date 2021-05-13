@@ -6,27 +6,9 @@
 --######       My Discord: https://discord.gg/Fm9kgfk            #######
 ------------------------------------------------------------------------
 --######################################################################
-local _, ns = ...;
 local UnitIsDeadOrGhost = UnitIsDeadOrGhost;
 local UnitIsConnected = UnitIsConnected;
-local GetCVarBool = GetCVarBool;
-local PLAYER_OFFLINE =  PLAYER_OFFLINE;
-local DEAD = DEAD;
-local CONFIG = ns:GetConfig();
-
-if ( GetLocale() == "ruRU" ) then
-    FOURTH_NUMBER_CAP_NO_SPACE = "T";
-    THIRD_NUMBER_CAP_NO_SPACE = "МЛРД";
-    SECOND_NUMBER_CAP_NO_SPACE = "М";
-    FIRST_NUMBER_CAP_NO_SPACE = "к";
-else
-    FOURTH_NUMBER_CAP_NO_SPACE = "T";
-    THIRD_NUMBER_CAP_NO_SPACE = "B";
-    SECOND_NUMBER_CAP_NO_SPACE = "M";
-    FIRST_NUMBER_CAP_NO_SPACE = "K";
-end
-
-
+local MANA = MANA;
 ---------------------------------------------------------
 local NUMBER_ABBREVIATION_DATA = {
     -- Order these from largest to smallest
@@ -60,109 +42,80 @@ function AbbreviateNumbers(value, remainder )
     return tostring(value);
 end
 
-local function GetFrameType(frame)
-    local typeFrame = (frame:GetName()):match("(%u%l+Frame)");
-    return typeFrame;
-end
-
-local function GetStatusBarType(bar)
-    if not ( bar and bar.GetName ) then
-        return;
-    end
-
-    return (bar:GetName()):match("HealthBar") or "ManaBar";
-end
-
-local function GetTextType(frame)
-    return (frame:GetName()):match("Percent") or "Status";
-end
-
-local function SetPosition(frame, point, relativeTo, relativePoint, ofsx, ofsy)
-    local barType = GetStatusBarType(frame);
-    local frameType = GetFrameType(frame);
-    local textType = GetTextType(frame);
-    local setting = CONFIG.position
-
-    if ( frameType ) then
-        local xOff = setting[frameType][textType][barType].ofsx;
-        local yOff = setting[frameType][textType][barType].ofsy;
-
-        frame:SetPoint(point, relativeTo, relativePoint, ofsx or xOff, ofsy or yOff);
-    end
-end
-
 local function Abbreviated_UpdateTextString(self)
-    local _, valueMax = self:GetMinMaxValues();
-    local value = self:GetValue();
-    local unit = self.unit;
-    local statustext = self.TextString;
-    local stringText = AbbreviateNumbers(value, CONFIG.remainder);
-    local cvarPerc = GetCVarBool("statusTextPercentage");
-    local statustextPercentage = self.TextPercent and self.TextPercent.text;
-    local cvarStatusText = GetCVarBool(self.cvar or "");
-
-    if ( cvarPerc and value > 0 ) then
-        local barType = GetStatusBarType(self);
-        local percentText = string.format("%.f%%", value/valueMax*100);
-
-        if ( not statustextPercentage ) then
-            self.TextPercent = CreateFrame("Frame", "$parentTextPercent", self, "TextStatusBarTextPercentTemplate");
-            self.TextPercent:SetFrameLevel(self:GetFrameLevel() + 1);
-            self.TextPercent:SetAllPoints();
-            statustextPercentage = self.TextPercent.text;
-        end
-
-        statustextPercentage:Show();
-        statustextPercentage:ClearAllPoints();
-        statustextPercentage:SetText(percentText);
-
-        if ( statustext and not statustext:IsShown() ) then
-            SetPosition(statustextPercentage, "CENTER", self, "CENTER");
-        else
-            SetPosition(statustextPercentage, "LEFT", self, "LEFT");
-        end
-
-        if ( CONFIG["show"..barType] or not cvarStatusText ) then
-            if ( unit and ( UnitIsDeadOrGhost(unit) or not UnitIsConnected(unit) ) ) then
-                statustextPercentage:Hide();
-            else
-                statustextPercentage:Show();
-            end
-        else
-            statustextPercentage:Hide();
-        end
-    elseif ( statustextPercentage ) then
-        statustextPercentage:Hide();
-    end
-
-    if ( ( not statustext ) or ( not statustext:IsShown() ) ) then
+    if not ( self.unit and AbbreviatedStatusGetUnitOption(string.gsub(self.unit, "[%d]", ""))) then
         return;
     end
 
-    local health = (statustext:GetName() or ""):match("Health");
-    statustext:SetAlpha(1);
-    statustext:ClearAllPoints();
-    SetPosition(statustext, "CENTER", self, "CENTER");
+    local _, valueMax = self:GetMinMaxValues();
+    local unit = self.unit;
+    local unitType = string.gsub(unit, "[%d]", "");
+    local value = self:GetValue();
+    local remainder = AbbreviatedStatusOption_GetRemainder();
+    local statusText = self.TextString;
+    local stringText = AbbreviateNumbers(value, remainder);
+    local percText = string.format("%.f%%", value/valueMax*100);
+    local precentText = self.TextPercent and self.TextPercent.text;
 
-    if ( unit and not UnitIsConnected(unit) ) then
-        statustext:SetText(PLAYER_OFFLINE);
-    elseif ( unit and UnitIsDeadOrGhost(unit) ) then
-            if ( health ) then
-                statustext:SetText(DEAD);
-            else
-                statustext:SetAlpha(0);
-            end
-    elseif ( value > 0 ) then
-        if ( cvarPerc ) then
-            statustext:ClearAllPoints();
-            SetPosition(statustext, "RIGHT", self, "RIGHT");
+    local barType = self.prefix or AbbreviatedStatusOption_GetStatusBarType(self);
+    local cvarStatus, cvarPecernt = AbbreviatedStatus_GetCVarBool(unitType, barType);
+
+    if ( not statusText ) then
+        return;
+    end
+
+    if ( not precentText ) then
+        self.TextPercent = CreateFrame("Frame", "$parentPecent", self, "TextPercentBarTemplate");
+        self.TextPercent:SetFrameLevel(self:GetFrameLevel() + 1);
+        self.TextPercent:SetAllPoints();
+        precentText = self.TextPercent.text;
+    end
+
+    if ( cvarPecernt and value > 0 ) then
+        precentText:SetText(percText);
+        if ( not UnitIsConnected(unit) or UnitIsDeadOrGhost(unit) ) then
+            precentText:Hide();
+            self.updatePoint = true;
+        else
+            precentText:Show();
+            self.updatePoint = true;
         end
-        statustext:SetText(stringText);
     else
-        statustext:SetAlpha(0);
+        precentText:Hide();
+        self.updatePoint = true;
+    end
+
+    if ( cvarStatus) then
+        AbbreviatedStatusOption_SetText(statusText, unit, stringText);
+        if ( barType == MANA and ( not UnitIsConnected(unit) or UnitIsDeadOrGhost(unit) ) ) then
+            statusText:Hide();
+        elseif ( value == 0 and barType == MANA ) then
+            statusText:Hide();
+            self.updatePoint = true;
+        else
+            statusText:Show();
+            self.updatePoint = true;
+        end
+    else
+        statusText:Hide();
+        self.updatePoint = true;
+    end
+
+
+    if ( self.updatePoint ) then
+        if ( cvarPecernt and cvarStatus ) then
+            AbbreviatedStatusOption_SetPosition(precentText, "LEFT", self, barType, "percent", unitType);
+            AbbreviatedStatusOption_SetPosition(statusText, "RIGHT", self, barType, "status", unitType);
+            if ( precentText and not precentText:IsShown() ) then
+                AbbreviatedStatusOption_SetPosition(statusText, "CENTER", self, barType, "status", unitType);
+            end
+        else
+            AbbreviatedStatusOption_SetPosition(precentText, "CENTER", self, barType, "percent", unitType);
+            AbbreviatedStatusOption_SetPosition(statusText, "CENTER", self, barType, "status", unitType);
+        end
+        self.updatePoint = false;
     end
 
 end
 
 hooksecurefunc("TextStatusBar_UpdateTextString", Abbreviated_UpdateTextString);
-

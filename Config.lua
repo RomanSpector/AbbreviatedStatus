@@ -1,71 +1,69 @@
-local _, ns = ...
-function ns:GetConfig()
+local _, ns = ...;
+local HEALTH = HEALTH;
+local MANA = MANA;
+function ns:GetDefaultPofile()
     return {
-        remainder = 1, -- digits after the decimal point
-        showManaBar = true, -- display % text on manabar when the text status is enabled
-        showHealthBar = true, -- display % text on healthbar when the text status is enabled
-
-        position = { -- fix ArenaFrame and PetFrame position on the Y axis
-            ["PetFrame"] = {
-                Status = {
-                    ["HealthBar"] = { ofsy = 0, ofsx = 0 },
-                    ["ManaBar"]   = { ofsy = -1.5, ofsx = 0 },
-                },
-                Percent = {
-                    ["HealthBar"] = { ofsy = 0, ofsx = 0 },
-                    ["ManaBar"]   = { ofsy = -1.5, ofsx = 0 },
-                }
+        locale = GetLocale(),
+        remainder = 1,
+        ["player"] = {
+            [HEALTH] = {
+                percent = { enable = true, xOff = 0, yOff = 0 },
+                status = { enable = true, xOff = 0, yOff = 0 },
             },
-            ["EnemyFrame"] = { -- ArenaFrame
-                Status = {
-                    ["HealthBar"] = { ofsy = 2, ofsx = 0 },
-                    ["ManaBar"]   = { ofsy = -1.5, ofsx = 0 },
-                },
-                Percent = {
-                    ["HealthBar"] = { ofsy = 2, ofsx = 0 },
-                    ["ManaBar"]   = { ofsy = -1.5, ofsx = 0 },
-                }
+            [MANA] = {
+                percent = { enable = true, xOff = 0, yOff = 0 },
+                status = { enable = true, xOff = 0, yOff = 0 },
+            }
+        },
+        ["pet"] = {
+            [HEALTH] = {
+                percent = { enable = true, xOff = 0, yOff = 0 },
+                status = { enable = true, xOff = 0, yOff = 0 },
             },
-            ["TargetFrame"] = {
-                Status = {
-                    ["HealthBar"] = { ofsy = 0, ofsx = -5 },
-                    ["ManaBar"]   = { ofsy = 0, ofsx = -5 },
-                },
-                Percent = {
-                    ["HealthBar"] = { ofsy = 0, ofsx = 0 },
-                    ["ManaBar"]   = { ofsy = 0, ofsx = 0 },
-                }
+            [MANA] = {
+                percent = { enable = true, xOff = 0, yOff = 0 },
+                status = { enable = true, xOff = 0, yOff = 0 },
+            }
+        },
+        ["target"] = {
+            [HEALTH] = {
+                percent = { enable = true, xOff = 0, yOff = 0 },
+                status = { enable = true, xOff = 0, yOff = 0 },
             },
-            ["FocusFrame"] = {
-                Status = {
-                    ["HealthBar"] = { ofsy = 0, ofsx = -5 },
-                    ["ManaBar"]   = { ofsy = 0, ofsx = -5 },
-                },
-                Percent = {
-                    ["HealthBar"] = { ofsy = 0, ofsx = 0 },
-                    ["ManaBar"]   = { ofsy = 0, ofsx = 0 },
-                }
+            [MANA] = {
+                percent = { enable = true, xOff = 0, yOff = 0 },
+                status = { enable = true, xOff = 0, yOff = 0 },
+            }
+        },
+        ["focus"] = {
+            [HEALTH] = {
+                percent = { enable = true, xOff = 0, yOff = 0 },
+                status = { enable = true, xOff = 0, yOff = 0 },
             },
-            ["MemberFrame"] = { -- PartyFrame
-                Status = {
-                    ["HealthBar"] = { ofsy = 0, ofsx = 0 },
-                    ["ManaBar"]   = { ofsy = 0, ofsx = 0 },
-                },
-                Percent = {
-                    ["HealthBar"] = { ofsy = 0, ofsx = 5 },
-                    ["ManaBar"]   = { ofsy = 0, ofsx = 5 },
-                }
+            [MANA] = {
+                percent = { enable = true, xOff = 0, yOff = 0 },
+                status = { enable = true, xOff = 0, yOff = 0 },
+            }
+        },
+        ["party"] = {
+            [HEALTH] = {
+                percent = { enable = true, xOff = 0, yOff = 0 },
+                status = { enable = true, xOff = 0, yOff = 0 },
             },
-            ["PlayerFrame"] = {
-                Status = {
-                    ["HealthBar"] = { ofsy = 0, ofsx = 0 },
-                    ["ManaBar"]   = { ofsy = 0, ofsx = 0 },
-                },
-                Percent = {
-                    ["HealthBar"] = { ofsy = 0, ofsx = 5 },
-                    ["ManaBar"]   = { ofsy = 0, ofsx = 5 },
-                }
+            [MANA] = {
+                percent = { enable = true, xOff = 0, yOff = 0 },
+                status = { enable = true, xOff = 0, yOff = 0 },
+            }
+        },
+        ["arena"] = {
+            [HEALTH] = {
+                percent = { enable = true, xOff = 0, yOff = 0 },
+                status = { enable = true, xOff = 0, yOff = 0 },
             },
+            [MANA] = {
+                percent = { enable = true, xOff = 0, yOff = 0 },
+                status = { enable = true, xOff = 0, yOff = 0 },
+            }
         }
-    };
+    }
 end
