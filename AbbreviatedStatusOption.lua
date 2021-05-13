@@ -10,9 +10,6 @@ local DEFAULT_PROFILE = ns:GetDefaultPofile();
 -- .options - Array, array of possible options
 -- Required strings:
 -- ABBREVIATED_STATUS_OPTION_≤OPTION_NAME>
-function ns:GetProfileSetting()
-    return PROFILES and PROFILES[1] or DEFAULT_PROFILE;
-end
 
 function AbbreviatedStatus:OnInitialize()
 	self.db = AceDB:New("AbbreviatedStatusDB");
