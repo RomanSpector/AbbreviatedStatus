@@ -114,6 +114,7 @@ function AbbreviatedStatusOption_ValidateProfilesLoaded()
     if ( #PROFILES == 0 ) then
         local profile = CopyTable(DEFAULT_PROFILE);
         table.insert(PROFILES, profile);
+        AbbreviatedStatusOption_UpdateCurrentPanel();
     elseif ( PROFILES[1].locale ~= GetLocale() ) then
         AbbreviatedStatusOption_ResetToDefaults();
     else
@@ -150,7 +151,7 @@ function AbbreviatedStatusOptionCheckButton_OnEven(self, event, name, value)
         AbbreviatedStatusOptionCheckButton_OnClick(self, "LeftButton", value);
     end
 end
--- AbbreviatedStatusGetProfileOption(unit, prefix, type, optionName)
+
 function AbbreviatedStatusOptionCheckButton_Update(self)
     local optionFrame = AbbreviatedStatusOption_GetOptionFrame(self);
 	local currentValue = AbbreviatedStatusGetProfileOption(optionFrame.unit, self.prefix, optionFrame.type, self.optionName);
