@@ -368,7 +368,7 @@ function AbbreviatedStatusOption_SetShown(textFrame, enable)
 end
 
 function AbbreviatedStatusOption_SetPosition(text, point, relativeTo, barType, status, unit)
-    local xOff, yOff =  0, 0
+    local xOff, yOff =  0, 0;
     if ( point ~= "CENTER" ) then
         xOff, yOff = AbbreviatedStatusOption_GetPoint(unit, barType, status);
     end

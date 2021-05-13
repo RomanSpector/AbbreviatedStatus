@@ -57,7 +57,7 @@ local function Abbreviated_UpdateTextString(self)
     local percText = string.format("%.f%%", value/valueMax*100);
     local precentText = self.TextPercent and self.TextPercent.text;
 
-    local barType = self.prefix or AbbreviatedStatusOption_GetStatusBarType(self);
+    local barType = AbbreviatedStatusOption_GetStatusBarType(self);
     local cvarStatus, cvarPecernt = AbbreviatedStatus_GetCVarBool(unitType, barType);
 
     if ( not statusText ) then
