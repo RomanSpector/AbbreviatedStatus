@@ -24,16 +24,10 @@ function ns:GetDefaultProfile()
         version     = version,
         remainder   = 1,
         ["player"]  = AbbreviatedStatusOption_SetDefaultSetting(),
-        ["pet"]     = {
-                        ["healthbar"] = { enable = true, xOff = 0, yOff = 0 },
-                        ["manabar"] = { enable = true, xOff = 0, yOff = -1.5 },
-                    },
+        ["pet"]     = AbbreviatedStatusOption_SetDefaultSetting(),
         ["target"]  = AbbreviatedStatusOption_SetDefaultSetting(),
         ["focus"]   = AbbreviatedStatusOption_SetDefaultSetting(),
         ["party"]   = AbbreviatedStatusOption_SetDefaultSetting(),
-        ["arena"]   = {
-                        ["healthbar"] = { enable = true, xOff = 0, yOff = 2 },
-                        ["manabar"] = { enable = true, xOff = 0, yOff = 1 },
-                    }
+        ["arena"]   = AbbreviatedStatusOption_SetDefaultSetting(),
     };
 end
