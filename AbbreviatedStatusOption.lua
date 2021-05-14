@@ -355,12 +355,9 @@ function AbbreviatedStatusOption_SetShown(textFrame, enable)
 end
 
 function AbbreviatedStatusOption_SetPosition(text, point, relativeTo, barType, status, unit)
-    local xOff, yOff =  0, 0;
-    if ( point ~= "CENTER" ) then
-        xOff, yOff = AbbreviatedStatusOption_GetPoint(unit, barType, status);
-    end
+    local xOff, yOff = AbbreviatedStatusOption_GetPoint(unit, barType, status);
     text:ClearAllPoints();
-    text:SetPoint(point, relativeTo, point, xOff, yOff);
+    text:SetPoint(point, relativeTo, point, point == "CENTER" and 0 or xOff, yOff);
 end
 
 function AbbreviatedStatusOption_SetText(frame, unit, text)
