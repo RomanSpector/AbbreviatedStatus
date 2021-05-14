@@ -1,14 +1,14 @@
 local addon, ns = ...;
 local version = GetAddOnMetadata(addon, "Version");
 
-function AbbreviatedStatusOption_SetTtextProperties()
+function AbbreviatedStatusOption_SetTextProperties()
     return { enable = true, xOff = 0, yOff = 0 };
 end
 
 function AbbreviatedStatusOption_SetBarProperties()
     return {
-        percent = AbbreviatedStatusOption_SetTtextProperties(),
-        status = AbbreviatedStatusOption_SetTtextProperties(),
+        percent = AbbreviatedStatusOption_SetTextProperties(),
+        status = AbbreviatedStatusOption_SetTextProperties(),
     };
 end
 
