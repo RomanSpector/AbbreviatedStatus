@@ -8,7 +8,6 @@
 --######################################################################
 local UnitIsDeadOrGhost = UnitIsDeadOrGhost;
 local UnitIsConnected = UnitIsConnected;
-local MANA = MANA;
 ---------------------------------------------------------
 local NUMBER_ABBREVIATION_DATA = {
     -- Order these from largest to smallest
@@ -87,9 +86,9 @@ local function Abbreviated_UpdateTextString(self)
 
     if ( cvarStatus) then
         AbbreviatedStatusOption_SetText(statusText, unit, stringText);
-        if ( barType == MANA and ( not UnitIsConnected(unit) or UnitIsDeadOrGhost(unit) ) ) then
+        if ( barType == "manabar" and ( not UnitIsConnected(unit) or UnitIsDeadOrGhost(unit) ) ) then
             statusText:Hide();
-        elseif ( value == 0 and barType == MANA ) then
+        elseif ( value == 0 and barType == "manabar" ) then
             statusText:Hide();
             self.updatePoint = true;
         else

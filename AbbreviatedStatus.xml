@@ -174,9 +174,9 @@
         </Anchors>
         <Scripts>
           <OnLoad>
-            self.check.prefix = HEALTH;
-            self.yOffSet.prefix = HEALTH;
-            self.xOffSet.prefix = HEALTH;
+            self.check.prefix = "healthbar";
+            self.yOffSet.prefix = "healthbar";
+            self.xOffSet.prefix = "healthbar";
           </OnLoad>
         </Scripts>
       </Frame>
@@ -188,9 +188,9 @@
         </Anchors>
         <Scripts>
           <OnLoad>
-            self.check.prefix = MANA;
-            self.yOffSet.prefix = MANA;
-            self.xOffSet.prefix = MANA;
+            self.check.prefix = "manabar";
+            self.yOffSet.prefix = "manabar";
+            self.xOffSet.prefix = "manabar";
           </OnLoad>
         </Scripts>
       </Frame>
@@ -252,6 +252,15 @@
             <Anchor point="TOPLEFT">
               <Offset>
                 <AbsDimension x="16" y="-16"/>
+              </Offset>
+            </Anchor>
+          </Anchors>
+        </FontString>
+        <FontString name="$parentVersion" parentKey="version" inherits="GameFontNormalMed3" justifyH="RIGHT" justifyV="TOP">
+          <Anchors>
+            <Anchor point="TOPRIGHT">
+              <Offset>
+                <AbsDimension x="-16" y="-16"/>
               </Offset>
             </Anchor>
           </Anchors>

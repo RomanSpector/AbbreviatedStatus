@@ -1,7 +1,8 @@
 ---@diagnostic disable: ambiguity-1
 local AbbreviatedStatus = LibStub("AceAddon-3.0"):NewAddon("AbbreviatedStatus", "AceConsole-3.0");
 local AceDB = LibStub("AceDB-3.0");
-local _, ns = ...;
+local addon, ns = ...;
+local version = GetAddOnMetadata(addon, "Version");
 local PROFILES;
 local DEFAULT_PROFILE = ns:GetDefaultPofile();
 
@@ -19,11 +20,8 @@ function AbbreviatedStatus:OnInitialize()
         ROMANSPECTOR_DISCORD = true;
         DEFAULT_CHAT_FRAME:AddMessage("|cffbaf5aeAbbreviatedStatus|r: even more useful addons in my Discord group |cff44d3e3https://discord.gg/wXw6pTvxMQ|r");
     end
-    InterfaceOptionsFrame:HookScript("OnShow", function()
-        InterfaceOptionsFrame:SetSize(858, 660);
-        InterfaceOptionsFrame:SetMinResize(858, 660);
-    end)
-    AbbreviatedStatusOption_OnEvent(AbbreviatedStatusOption, "ABBREVIATED_STATUS_OPTION_PROFILES_LOADED");
+    
+    AbbreviatedStatusOption_ValidateProfilesLoaded()
 end
 
 function AbbreviatedStatusOption_GenerationFrame(string)
@@ -32,7 +30,7 @@ end
 
 function AbbreviatedStatusOption_OnLoad(self)
     self.name = "AbbreviatedStatus";
-    self:RegisterEvent("PLAYER_LOGIN");
+    self.version:SetText((ABBREVIATED_STATUS_OPTION_VERSION):format(version));
 
     local unitFrames = {
         player = AbbreviatedStatusOption_GenerationFrame("PlayerFrame"),
@@ -101,18 +99,12 @@ function AbbreviatedStatusSubOption_OnLoad(self)
     InterfaceOptions_AddCategory(self);
 end
 
-function AbbreviatedStatusOption_OnEvent(self, event, ...)
-    if ( event == "ABBREVIATED_STATUS_OPTION_PROFILES_LOADED") then
-        AbbreviatedStatusOption_ValidateProfilesLoaded();
-    end
-end
-
 function AbbreviatedStatusOption_ValidateProfilesLoaded()
     if ( #PROFILES == 0 ) then
         local profile = CopyTable(DEFAULT_PROFILE);
         table.insert(PROFILES, profile);
         AbbreviatedStatusOption_UpdateCurrentPanel();
-    elseif ( PROFILES[1].locale ~= GetLocale() ) then
+    elseif ( PROFILES[1].version ~= version ) then
         AbbreviatedStatusOption_ResetToDefaults();
     else
         AbbreviatedStatusOption_UpdateCurrentPanel();
@@ -231,8 +223,6 @@ end
 -------------------------------------------------------------
 -----------------Applying of Options----------------------
 -------------------------------------------------------------
-local MANA = MANA;
-local HEALTH = HEALTH;
 local UnitIsDeadOrGhost = UnitIsDeadOrGhost;
 local UnitIsConnected = UnitIsConnected;
 
@@ -352,8 +342,8 @@ function AbbreviatedStatusOption_GetStatusBarType(bar)
     if not ( bar and bar.GetName ) then
         return;
     end
-
-    return ((bar:GetName()):match("HealthBar")) and HEALTH or MANA;
+    local barType = ((bar:GetName()):match("HealthBar")) or "manabar";
+    return strlower(barType);
 end
 
 function AbbreviatedStatusOption_SetShown(textFrame, enable)
