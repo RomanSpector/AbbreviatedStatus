@@ -1,17 +1,22 @@
 local addon, ns = ...;
 local version = GetAddOnMetadata(addon, "Version");
 
+function AbbreviatedStatusOption_SetTtextProperties()
+    return { enable = true, xOff = 0, yOff = 0 };
+end
+
+function AbbreviatedStatusOption_SetBarProperties()
+    return {
+        percent = AbbreviatedStatusOption_SetTtextProperties(),
+        status = AbbreviatedStatusOption_SetTtextProperties(),
+    };
+end
+
 function AbbreviatedStatusOption_SetDefaultSetting()
     return {
-        ["healthbar"] = {
-            percent = { enable = true, xOff = 0, yOff = 0 },
-            status = { enable = true, xOff = 0, yOff = 0 },
-        },
-        ["manabar"] = {
-            percent = { enable = true, xOff = 0, yOff = 0 },
-            status = { enable = true, xOff = 0, yOff = 0 },
-        }
-    }
+        ["healthbar"] = AbbreviatedStatusOption_SetBarProperties(),
+        ["manabar"] = AbbreviatedStatusOption_SetBarProperties()
+    };
 end
 
 function ns:GetDefaultProfile()
