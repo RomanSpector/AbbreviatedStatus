@@ -14,7 +14,7 @@ function AbbreviatedStatusOption_SetDefaultSetting()
     }
 end
 
-function ns:GetDefaultPofile()
+function ns:GetDefaultProfile()
     return {
         version     = version,
         remainder   = 1,

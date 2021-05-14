@@ -4,7 +4,7 @@ local AceDB = LibStub("AceDB-3.0");
 local addon, ns = ...;
 local version = GetAddOnMetadata(addon, "Version");
 local PROFILES;
-local DEFAULT_PROFILE = ns:GetDefaultPofile();
+local DEFAULT_PROFILE = ns:GetDefaultProfile();
 
 -- Required key/value pairs:
 -- .optionName - String, name of option
