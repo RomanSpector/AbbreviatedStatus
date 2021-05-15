@@ -20,35 +20,45 @@ function AbbreviatedStatus:OnInitialize()
         ROMANSPECTOR_DISCORD = true;
         DEFAULT_CHAT_FRAME:AddMessage("|cffbaf5aeAbbreviatedStatus|r: even more useful addons in my Discord group |cff44d3e3https://discord.gg/wXw6pTvxMQ|r");
     end
-    
+
     AbbreviatedStatusOption_ValidateProfilesLoaded()
 end
 
-function AbbreviatedStatusOption_GenerationFrame(string)
-    return { manabar = string.."ManaBar", healthbar = string.."HealthBar" };
+function AbbreviatedStatusOption_GenerationFrame(string, releaseFunc)
+    return { manabar = string.."ManaBar", healthbar = string.."HealthBar", releaseFunc = releaseFunc };
 end
 
 function AbbreviatedStatusOption_OnLoad(self)
     self.name = "AbbreviatedStatus";
     self.version:SetText((ABBREVIATED_STATUS_OPTION_VERSION):format(version));
 
-    local unitFrames = {
-        player = AbbreviatedStatusOption_GenerationFrame("PlayerFrame"),
-        pet = AbbreviatedStatusOption_GenerationFrame("PetFrame"),
-        target = AbbreviatedStatusOption_GenerationFrame("TargetFrame"),
-        focus = AbbreviatedStatusOption_GenerationFrame("FocusFrame"),
-    };
-    unitFrames.party = { };
-    unitFrames.partypet = { };
-    unitFrames.arena = { };
-    for i=1,4 do
-        tinsert(unitFrames.party, AbbreviatedStatusOption_GenerationFrame("PartyMemberFrame"..i));
-    end
-    for i=1,5 do
-        tinsert(unitFrames.arena, AbbreviatedStatusOption_GenerationFrame("ArenaEnemyFrame"..i));
+    local unitFrameReleaseFunc = function(self)
+        local manabar = _G[self.manabar];
+        local healthbar = _G[self.healthbar];
+        if ( manabar ) then
+            TextStatusBar_UpdateTextString(manabar);
+        end
+        if ( healthbar ) then
+            TextStatusBar_UpdateTextString(healthbar);
+        end
     end
 
-    self.GeneralFrames = unitFrames;
+    local unitFrames = {
+        player = AbbreviatedStatusOption_GenerationFrame("PlayerFrame", unitFrameReleaseFunc),
+        pet = AbbreviatedStatusOption_GenerationFrame("PetFrame", unitFrameReleaseFunc),
+        target = AbbreviatedStatusOption_GenerationFrame("TargetFrame", unitFrameReleaseFunc),
+        focus = AbbreviatedStatusOption_GenerationFrame("FocusFrame", unitFrameReleaseFunc),
+    };
+    unitFrames.party = { };
+    unitFrames.arena = { };
+    for i=1,4 do
+        tinsert(unitFrames.party, AbbreviatedStatusOption_GenerationFrame("PartyMemberFrame"..i, unitFrameReleaseFunc));
+    end
+    for i=1,5 do
+        tinsert(unitFrames.arena, AbbreviatedStatusOption_GenerationFrame("ArenaEnemyFrame"..i, unitFrameReleaseFunc));
+    end
+
+    self.GeneralFrame = unitFrames;
     InterfaceOptions_AddCategory(self);
 end
 
@@ -93,7 +103,7 @@ function AbbreviatedStatusSubOption_OnLoad(self)
 
     self.parent = AbbreviatedStatusOption.name;
     self.name = _G[tag] or ("Need string: "..tag);
-    self.GeneralFrame = AbbreviatedStatusOption.GeneralFrames[self.unit];
+    self.GeneralFrame = AbbreviatedStatusOption.GeneralFrame[self.unit];
 
     AbbreviatedStatusOptions_SetUnit(self);
     InterfaceOptions_AddCategory(self);
@@ -103,12 +113,8 @@ function AbbreviatedStatusOption_ValidateProfilesLoaded()
     if ( #PROFILES == 0 ) then
         local profile = CopyTable(DEFAULT_PROFILE);
         table.insert(PROFILES, profile);
-        AbbreviatedStatusOption_UpdateCurrentPanel();
-    elseif ( PROFILES[1].version ~= version ) then
-        AbbreviatedStatusOption_ResetToDefaults();
-    else
-        AbbreviatedStatusOption_UpdateCurrentPanel();
     end
+    AbbreviatedStatusOption_UpdateCurrentPanel();
 end
 --------------------------------------------------------------
 -----------------UI Option Templates---------------------
@@ -180,7 +186,7 @@ function AbbreviatedStatusOptionCheckButton_OnClick(self, button, currentValue)
     local optionFrame = AbbreviatedStatusOption_GetOptionFrame(self);
     AbbreviatedStatusOptionChekButton_SetStatus(self);
 	AbbreviatedStatusSetProfileOption(optionFrame.unit, self.prefix, optionFrame.type, self.optionName, self:GetChecked() or false);
-    AbbreviatedStatusOption_ApplySetting(AbbreviatedStatusOption_GetParent(self));
+    AbbreviatedStatusOption_ApplySetting(AbbreviatedStatusOption_GetParent(self).GeneralFrame);
 end
 -------------------------------
 ------- Slider ----------------
@@ -209,15 +215,15 @@ function AbbreviatedStatusOptionSlider_Update(self)
 end
 
 function AbbreviatedStatusOptionSlider_OnValueChanged(self, value)
-    if ( self.name == "remainder") then
+    if ( self.optionName == "remainder" ) then
         self.value:SetText(format("%.f", value));
         AbbreviatedStatusOptionSet_Remainer(value);
-        return;
+    else
+        local optionFrame = AbbreviatedStatusOption_GetOptionFrame(self);
+        self.value:SetText(format("%.1f", value));
+        AbbreviatedStatusSetProfileOption(optionFrame.unit, self.prefix, optionFrame.type, self.optionName, value);
+        AbbreviatedStatusOption_ApplySetting(AbbreviatedStatusOption_GetParent(self).GeneralFrame);
     end
-    self.value:SetText(format("%.1f", value));
-    local optionFrame = AbbreviatedStatusOption_GetOptionFrame(self);
-    AbbreviatedStatusSetProfileOption(optionFrame.unit, self.prefix, optionFrame.type, self.optionName, value);
-    AbbreviatedStatusOption_ApplySetting(AbbreviatedStatusOption_GetParent(self).GeneralFrame);
 end
 
 -------------------------------------------------------------
@@ -225,6 +231,8 @@ end
 -------------------------------------------------------------
 local UnitIsDeadOrGhost = UnitIsDeadOrGhost;
 local UnitIsConnected = UnitIsConnected;
+local PLAYER_OFFLINE = PLAYER_OFFLINE;
+local DEAD = DEAD;
 
 function AbbreviatedStatusSetProfileOption(unit, prefix, type, optionName, value)
     if not ( PROFILES and unit) then
@@ -245,7 +253,7 @@ function AbbreviatedStatusOptionSet_Remainer(value)
         return;
     end
     PROFILES[1].remainder = value;
-    AbbreviatedStatusOption_ApplySetting(AbbreviatedStatusOption.GeneralFrames);
+    AbbreviatedStatusOption_UpdateUnits(AbbreviatedStatusOption);
 end
 
 function AbbreviatedStatusGetProfileOption(unit, prefix, type, optionName)
@@ -265,7 +273,7 @@ function AbbreviatedStatusGetUnitOption(unit)
     if ( not PROFILES ) then
         return;
     end
-    return PROFILES[1][unit]
+    return PROFILES[1][unit];
 end
 
 function AbbreviatedStatusOption_GetRemainder()
@@ -273,7 +281,7 @@ function AbbreviatedStatusOption_GetRemainder()
         return 1;
     end
 
-    return PROFILES[1].remainder or 1;
+    return PROFILES[1].remainder;
 end
 
 function AbbreviatedStatusOption_UpdateCurrentPanel()
@@ -283,11 +291,9 @@ function AbbreviatedStatusOption_UpdateCurrentPanel()
 	end
 end
 
-local function GroupFramesApplySetting(frames)
-    for _, statusBar in pairs(frames) do
-        if ( _G[statusBar] ) then
-            TextStatusBar_UpdateTextString(_G[statusBar]);
-        end
+function AbbreviatedStatusOption_UpdateUnits(self)
+    for unit, frame in pairs(self.GeneralFrame) do
+        AbbreviatedStatusOption_ApplySetting(frame);
     end
 end
 
@@ -296,11 +302,11 @@ function AbbreviatedStatusOption_ApplySetting(GeneralFrame)
         return;
     end
 
-    for _, statusBar in pairs(GeneralFrame) do
-        if ( type(statusBar)=="table" ) then
-            GroupFramesApplySetting(statusBar);
-        elseif ( _G[statusBar] ) then
-            TextStatusBar_UpdateTextString(_G[statusBar]);
+     for key in pairs(GeneralFrame) do
+        if ( type(key) ~= "number" ) then
+            GeneralFrame:releaseFunc();
+        else
+            GeneralFrame[key]:releaseFunc();
         end
     end
 end

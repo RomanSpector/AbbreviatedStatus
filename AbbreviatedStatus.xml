@@ -1,356 +1,354 @@
-<Ui xmlns="http://www.blizzard.com/wow/ui/"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
-  <Script file="Config.lua"/>
-  <Script file="AbbreviatedStatus.lua"/>
-  <Script file="AbbreviatedStatusOption.lua"/>
-  <!-- Templates -->
-  <!-- PERCENT TEXT need for set frameLevel -->
-  <Frame name="TextPercentBarTemplate" virtual="true">
-    <Layers>
-      <Layer level="BACKGOUND">
-        <FontString name="$parentText" parentKey="text" inherits="TextStatusBarText">
-          <Anchors>
-            <Anchor point="CENTER">
-              <Offset>
-                <AbsDimension x="-20" y="3"/>
-              </Offset>
-            </Anchor>
-          </Anchors>
-        </FontString>
-      </Layer>
-    </Layers>
-  </Frame>
-  <!-- SEPARATOR -->
-  <Texture name="SeparatorTextureOptionTemplate" virtual="true">
-    <Anchors>
-      <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="10" y="-39"/>
-      <Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="-10" y="-40"/>
-    </Anchors>
-    <Layers>
-      <Layer>
-        <Texture>
-          <Color r="1" g="1" b="1" a="1"/>
-        </Texture>
-      </Layer>
-    </Layers>
-    <Color r="0.25" g="0.25" b="0.25"/>
-  </Texture>
-  <!-- CHECKBUTTON -->
-  <CheckButton name="AbbreviatedStatusOptionCheckButtonTemplate" motionScriptsWhileDisabled="true" virtual="true">
-    <Size>
-      <AbsDimension x="26" y="26"/>
-    </Size>
-    <HitRectInsets>
-      <AbsInset left="0" right="-100" top="0" bottom="0"/>
-    </HitRectInsets>
-    <Layers>
-      <Layer level="ARTWORK">
-        <FontString name="$parentLabel" inherits="GameFontHighlightLeft" parentKey="label">
-          <Anchors>
-            <Anchor point="LEFT" relativePoint="RIGHT">
-              <Offset>
-                <AbsDimension x="2" y="1"/>
-              </Offset>
-            </Anchor>
-          </Anchors>
-        </FontString>
-      </Layer>
-    </Layers>
-    <Scripts>
-      <OnClick function="AbbreviatedStatusOptionCheckButton_OnClick"/>
-      <OnEvent function="AbbreviatedStatusOptionCheckButton_OnEven"/>
-    </Scripts>
-    <NormalTexture file="Interface\Buttons\UI-CheckBox-Up"/>
-    <PushedTexture file="Interface\Buttons\UI-CheckBox-Down"/>
-    <HighlightTexture file="Interface\Buttons\UI-CheckBox-Highlight" alphaMode="ADD"/>
-    <CheckedTexture file="Interface\Buttons\UI-CheckBox-Check"/>
-    <DisabledCheckedTexture file="Interface\Buttons\UI-CheckBox-Check-Disabled"/>
-  </CheckButton>
-  <!-- SLIDER -->
-  <Slider name="AbbreviatedStatusOptionSliderTemplate" minValue="-5" maxValue="5" valueStep="0.1" inherits="OptionsSliderTemplate" virtual="true">
-    <Size x="194" y="17"/>
-    <Layers>
-      <Layer level="ARTWORK">
-        <FontString name="$parentValue" inherits="GameFontHighlightSmall" parentKey="value">
-          <Anchors>
-            <Anchor point="TOP" relativePoint="BOTTOM" x="0" y="0"/>
-          </Anchors>
-        </FontString>
-      </Layer>
-    </Layers>
-    <Scripts>
-      <OnEnable>
-        self.value:SetFontObject(GameFontHighlightLeft);
-        self.lable:SetFontObject(GameFontHighlightLeft);
-		    self.lowLable:SetFontObject(GameFontHighlightLeft);
-		    self.maxLable:SetFontObject(GameFontHighlightLeft);
-      </OnEnable>
-      <OnDisable>
-        self.value:SetFontObject(GameFontDisableLeft);
-        self.lable:SetFontObject(GameFontDisableLeft);
-		    self.lowLable:SetFontObject(GameFontDisableLeft);
-		    self.maxLable:SetFontObject(GameFontDisableLeft);
-      </OnDisable>
-      <OnValueChanged function="AbbreviatedStatusOptionSlider_OnValueChanged"/>
-    </Scripts>
-  </Slider>
-  <!-- TITLE TEXT -->
-  <Frame name="TitleSeparatorFrameTemplate" virtual="true">
-    <Layers>
-      <Layer level="ATWORK">
-        <Texture name="$parentSeparator" parentKey="separator">
-          <Color r="0.25" g="0.25" b="0.25" a="1"/>
-          <Anchors>
-            <Anchor point="TOPLEFT" relativePoint="LEFT" x="0" y="-2"/>
-            <Anchor point="BOTTOMRIGHT" relativePoint="RIGHT" x="0" y="-3"/>
-          </Anchors>
-        </Texture>
-        <FontString name="$parentText" inherits="GameFontNormalLarge" parentKey="text">
-          <Anchors>
-            <Anchor point="BOTTOMLEFT" relativeTo="$parentSeparator" relativePoint="TOPLEFT" x="0" y="6"/>
-          </Anchors>
-        </FontString>
-      </Layer>
-    </Layers>
-  </Frame>
-  <!-- SETFRAME OPTION -->
-  <Frame name="AbbreviatedStatusOptionFrameTemplate" virtual="true">
-    <Frames>
-      <CheckButton name="$parentCheck" parentKey="check" inherits="AbbreviatedStatusOptionCheckButtonTemplate">
-        <Anchors>
-          <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="10" y="-10"/>
-        </Anchors>
-      </CheckButton>
-      <Slider name="$parentXOFFSlider" parentKey="xOffSet" inherits="AbbreviatedStatusOptionSliderTemplate">
-        <Anchors>
-          <Anchor point="TOPLEFT" relativeTo="$parentCheck" relativePoint="BOTTOMLEFT" x="10" y="-15"/>
-        </Anchors>
-        <Scripts>
-          <OnLoad inherit="prepend">
-            self.lable = _G[self:GetName().."Text"];
-            self.lowLable = _G[self:GetName().."Low"]
-            self.maxLable = _G[self:GetName().."High"]
-            AbbreviatedStatusOptionSlider_InitializeWidget(self, "xOff", ABBREVIATED_STATUS_OPTION_LEFT, ABBREVIATED_STATUS_OPTION_RIGHT)
-          </OnLoad>
-        </Scripts>
-      </Slider>
-      <Slider name="$parentYOFFSlider" parentKey="yOffSet" inherits="AbbreviatedStatusOptionSliderTemplate">
-        <Anchors>
-          <Anchor point="TOPLEFT" relativeTo="$parentXOFFSlider" relativePoint="BOTTOMLEFT" x="0" y="-45"/>
-        </Anchors>
-        <Scripts>
-          <OnLoad inherit="prepend">
-            self.lable = _G[self:GetName().."Text"];
-            self.lowLable = _G[self:GetName().."Low"]
-            self.maxLable = _G[self:GetName().."High"]
-            AbbreviatedStatusOptionSlider_InitializeWidget(self, "yOff", ABBREVIATED_STATUS_OPTION_DOWN, ABBREVIATED_STATUS_OPTION_UP)
-          </OnLoad>
-        </Scripts>
-      </Slider>
-    </Frames>
-  </Frame>
-  <!-- SETFRAME TYPE OPTION -->
-  <Frame name="AbbreviatedStatusOptionTemplate" virtual="true">
-    <Frames>
-      <Frame name="$parentOptionFrame" parentKey="optionFrame">
-        <Anchors>
-          <Anchor point="TOPLEFT" relativeTo="$parentSeparator" relativePoint="TOPLEFT"/>
-          <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"/>
-        </Anchors>
-      </Frame>
-      <!--STATUS TITLE -->
-      <Frame name="$parentTitle" parentKey="title" inherits="TitleSeparatorFrameTemplate">
-        <Anchors>
-          <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="20" y="-20"/>
-          <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-30" y="160"/>
-        </Anchors>
-      </Frame>
-      <!-- HEALTH OPTION -->
-      <Frame name="$parentHealthOptions" parentKey="healthOptions" inherits="AbbreviatedStatusOptionFrameTemplate">
-        <Anchors>
-          <Anchor point="TOPLEFT" relativeTo="$parentTitleSeparator" relativePoint="TOPLEFT" x="0" y="-5"/>
-          <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOM" x="-20" y="5"/>
-        </Anchors>
-        <Scripts>
-          <OnLoad>
-            self.check.prefix = "healthbar";
-            self.yOffSet.prefix = "healthbar";
-            self.xOffSet.prefix = "healthbar";
-          </OnLoad>
-        </Scripts>
-      </Frame>
-      <!-- MANA OPTION -->
-      <Frame name="$parentManaOptions" parentKey="manaOptions" inherits="AbbreviatedStatusOptionFrameTemplate">
-        <Anchors>
-          <Anchor point="TOPRIGHT" relativeTo="$parentTitleSeparator" relativePoint="TOPRIGHT" x="0" y="-5"/>
-          <Anchor point="BOTTOMLEFT" relativePoint="BOTTOM" x="-20" y="5"/>
-        </Anchors>
-        <Scripts>
-          <OnLoad>
-            self.check.prefix = "manabar";
-            self.yOffSet.prefix = "manabar";
-            self.xOffSet.prefix = "manabar";
-          </OnLoad>
-        </Scripts>
-      </Frame>
-    </Frames>
-  </Frame>
-  <!-- SETUNIT OPTION -->
-  <Frame name="AbbreviatedStatusOptionUnitTemplate" virtual="true">
-    <Layers>
-      <Layer level="ARTWORK">
-        <FontString name="$parentTitle" inherits="GameFontNormalLarge" justifyH="LEFT" justifyV="TOP">
-          <Anchors>
-            <Anchor point="TOPLEFT">
-              <Offset>
-                <AbsDimension x="16" y="-16"/>
-              </Offset>
-            </Anchor>
-          </Anchors>
-        </FontString>
-        <Texture name="$parentSeparator" inherits="SeparatorTextureOptionTemplate"/>
-      </Layer>
-    </Layers>
-    <Frames>
-      <Frame name="$parentStatus" inherits="AbbreviatedStatusOptionTemplate">
-        <Anchors>
-          <Anchor point="TOPLEFT" relativeTo="$parentTitle" relativePoint="TOPLEFT" x="0" y="-60"/>
-          <Anchor point="BOTTOMRIGHT" relativePoint="RIGHT" x="0" y="40"/>
-        </Anchors>
-        <Scripts>
-          <OnLoad>
-            self.type = "status"
-            self.title.text:SetText(ABBREVIATED_STATUS_OPTION_STATUS)
-            AbbreviatedStatusOptionCheckButton_InitializeWidget(self.healthOptions.check, "health", "enable")
-            AbbreviatedStatusOptionCheckButton_InitializeWidget(self.manaOptions.check, "mana", "enable")
-          </OnLoad>
-        </Scripts>
-      </Frame>
-      <Frame name="$parentPercent" inherits="AbbreviatedStatusOptionTemplate">
-        <Anchors>
-          <Anchor point="TOPLEFT" relativeTo="$parentStatus" relativePoint="BOTTOMLEFT" x="0" y="0"/>
-          <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="100"/>
-        </Anchors>
-        <Scripts>
-          <OnLoad>
-            self.type = "percent"
-            self.title.text:SetText(ABBREVIATED_STATUS_OPTION_PERCENT)
-            AbbreviatedStatusOptionCheckButton_InitializeWidget(self.healthOptions.check, "health", "enable")
-            AbbreviatedStatusOptionCheckButton_InitializeWidget(self.manaOptions.check, "mana", "enable")
-          </OnLoad>
-        </Scripts>
-      </Frame>
-    </Frames>
-  </Frame>
-  <!-- MAINOPTION PANEL -->
-  <Frame name="AbbreviatedStatusOption" parent="InterfaceOptionsFramePanelContainer">
-    <Layers>
-      <Layer level="ARTWORK">
-        <FontString name="$parentTitle" text="Abbreviated Status" inherits="GameFontNormalLarge" justifyH="LEFT" justifyV="TOP">
-          <Anchors>
-            <Anchor point="TOPLEFT">
-              <Offset>
-                <AbsDimension x="16" y="-16"/>
-              </Offset>
-            </Anchor>
-          </Anchors>
-        </FontString>
-        <FontString name="$parentVersion" parentKey="version" inherits="GameFontNormalMed3" justifyH="RIGHT" justifyV="TOP">
-          <Anchors>
-            <Anchor point="TOPRIGHT">
-              <Offset>
-                <AbsDimension x="-16" y="-16"/>
-              </Offset>
-            </Anchor>
-          </Anchors>
-        </FontString>
-        <Texture name="$parentSeparator" inherits="SeparatorTextureOptionTemplate"/>
-      </Layer>
-    </Layers>
-    <Frames>
-      <Slider name="$parentRemainder" parentKey="remainder" inherits="AbbreviatedStatusOptionSliderTemplate" minValue="1" maxValue="3" valueStep="1">
-        <Anchors>
-          <Anchor point="TOPLEFT" relativeTo="$parentSeparator" x="60" y="-100"/>
-        </Anchors>
-        <Scripts>
-          <OnLoad inherit="prepend">
-            self.lable = _G[self:GetName().."Text"];
-            self.lowLable = _G[self:GetName().."Low"];
-            self.maxLable = _G[self:GetName().."High"];
-            self.name = "remainder";
-            AbbreviatedStatusOptionSlider_InitializeWidget(self, "remainder", nil, nil, function(self)
+	<Script file="Config.lua" />
+	<Script file="AbbreviatedStatus.lua" />
+	<Script file="AbbreviatedStatusOption.lua" />
+	<!-- Templates -->
+	<!-- PERCENT TEXT need for set frameLevel -->
+	<Frame name="TextPercentBarTemplate" virtual="true">
+		<Layers>
+			<Layer level="BACKGOUND">
+				<FontString name="$parentText" parentKey="text" inherits="TextStatusBarText">
+					<Anchors>
+						<Anchor point="CENTER">
+							<Offset>
+								<AbsDimension x="-20" y="3" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+	</Frame>
+	<!-- SEPARATOR -->
+	<Texture name="SeparatorTextureOptionTemplate" virtual="true">
+		<Anchors>
+			<Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="10" y="-39" />
+			<Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="-10" y="-40" />
+		</Anchors>
+		<Layers>
+			<Layer>
+				<Texture>
+					<Color r="1" g="1" b="1" a="1" />
+				</Texture>
+			</Layer>
+		</Layers>
+		<Color r="0.25" g="0.25" b="0.25" />
+	</Texture>
+	<!-- CHECKBUTTON -->
+	<CheckButton name="AbbreviatedStatusOptionCheckButtonTemplate" motionScriptsWhileDisabled="true" virtual="true">
+		<Size>
+			<AbsDimension x="26" y="26" />
+		</Size>
+		<HitRectInsets>
+			<AbsInset left="0" right="-100" top="0" bottom="0" />
+		</HitRectInsets>
+		<Layers>
+			<Layer level="ARTWORK">
+				<FontString name="$parentLabel" inherits="GameFontHighlightLeft" parentKey="label">
+					<Anchors>
+						<Anchor point="LEFT" relativePoint="RIGHT">
+							<Offset>
+								<AbsDimension x="2" y="1" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnClick function="AbbreviatedStatusOptionCheckButton_OnClick" />
+			<OnEvent function="AbbreviatedStatusOptionCheckButton_OnEven" />
+		</Scripts>
+		<NormalTexture file="Interface\Buttons\UI-CheckBox-Up" />
+		<PushedTexture file="Interface\Buttons\UI-CheckBox-Down" />
+		<HighlightTexture file="Interface\Buttons\UI-CheckBox-Highlight" alphaMode="ADD" />
+		<CheckedTexture file="Interface\Buttons\UI-CheckBox-Check" />
+		<DisabledCheckedTexture file="Interface\Buttons\UI-CheckBox-Check-Disabled" />
+	</CheckButton>
+	<!-- SLIDER -->
+	<Slider name="AbbreviatedStatusOptionSliderTemplate" minValue="-5" maxValue="5" valueStep="0.1" inherits="OptionsSliderTemplate" virtual="true">
+		<Size x="194" y="17" />
+		<Layers>
+			<Layer level="ARTWORK">
+				<FontString name="$parentValue" inherits="GameFontHighlightSmall" parentKey="value">
+					<Anchors>
+						<Anchor point="TOP" relativePoint="BOTTOM" x="0" y="0" />
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnEnable>
+				self.value:SetFontObject(GameFontHighlightLeft);
+				self.lable:SetFontObject(GameFontHighlightLeft);
+				self.lowLable:SetFontObject(GameFontHighlightLeft);
+				self.maxLable:SetFontObject(GameFontHighlightLeft);
+			</OnEnable>
+			<OnDisable>
+				self.value:SetFontObject(GameFontDisableLeft);
+				self.lable:SetFontObject(GameFontDisableLeft);
+				self.lowLable:SetFontObject(GameFontDisableLeft);
+				self.maxLable:SetFontObject(GameFontDisableLeft);
+			</OnDisable>
+			<OnValueChanged function="AbbreviatedStatusOptionSlider_OnValueChanged" />
+		</Scripts>
+	</Slider>
+	<!-- TITLE TEXT -->
+	<Frame name="TitleSeparatorFrameTemplate" virtual="true">
+		<Layers>
+			<Layer level="ATWORK">
+				<Texture name="$parentSeparator" parentKey="separator">
+					<Color r="0.25" g="0.25" b="0.25" a="1" />
+					<Anchors>
+						<Anchor point="TOPLEFT" relativePoint="LEFT" x="0" y="-2" />
+						<Anchor point="BOTTOMRIGHT" relativePoint="RIGHT" x="0" y="-3" />
+					</Anchors>
+				</Texture>
+				<FontString name="$parentText" inherits="GameFontNormalLarge" parentKey="text">
+					<Anchors>
+						<Anchor point="BOTTOMLEFT" relativeTo="$parentSeparator" relativePoint="TOPLEFT" x="0" y="6" />
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+	</Frame>
+	<!-- SETFRAME OPTION -->
+	<Frame name="AbbreviatedStatusOptionFrameTemplate" virtual="true">
+		<Frames>
+			<CheckButton name="$parentCheck" parentKey="check" inherits="AbbreviatedStatusOptionCheckButtonTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="10" y="-10" />
+				</Anchors>
+			</CheckButton>
+			<Slider name="$parentXOFFSlider" parentKey="xOffSet" inherits="AbbreviatedStatusOptionSliderTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentCheck" relativePoint="BOTTOMLEFT" x="10" y="-15" />
+				</Anchors>
+				<Scripts>
+					<OnLoad inherit="prepend">
+						self.lable = _G[self:GetName().."Text"];
+						self.lowLable = _G[self:GetName().."Low"]
+						self.maxLable = _G[self:GetName().."High"]
+						AbbreviatedStatusOptionSlider_InitializeWidget(self, "xOff", ABBREVIATED_STATUS_OPTION_LEFT, ABBREVIATED_STATUS_OPTION_RIGHT)
+					</OnLoad>
+				</Scripts>
+			</Slider>
+			<Slider name="$parentYOFFSlider" parentKey="yOffSet" inherits="AbbreviatedStatusOptionSliderTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentXOFFSlider" relativePoint="BOTTOMLEFT" x="0" y="-45" />
+				</Anchors>
+				<Scripts>
+					<OnLoad inherit="prepend">
+						self.lable = _G[self:GetName().."Text"];
+						self.lowLable = _G[self:GetName().."Low"]
+						self.maxLable = _G[self:GetName().."High"]
+						AbbreviatedStatusOptionSlider_InitializeWidget(self, "yOff", ABBREVIATED_STATUS_OPTION_DOWN, ABBREVIATED_STATUS_OPTION_UP)
+					</OnLoad>
+				</Scripts>
+			</Slider>
+		</Frames>
+	</Frame>
+	<!-- SETFRAME TYPE OPTION -->
+	<Frame name="AbbreviatedStatusOptionTemplate" virtual="true">
+		<Frames>
+			<Frame name="$parentOptionFrame" parentKey="optionFrame">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentSeparator" relativePoint="TOPLEFT" />
+					<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" />
+				</Anchors>
+			</Frame>
+			<!-- STATUS TITLE -->
+			<Frame name="$parentTitle" parentKey="title" inherits="TitleSeparatorFrameTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="20" y="-20" />
+					<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-30" y="160" />
+				</Anchors>
+			</Frame>
+			<!-- HEALTH OPTION -->
+			<Frame name="$parentHealthOptions" parentKey="healthOptions" inherits="AbbreviatedStatusOptionFrameTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentTitleSeparator" relativePoint="TOPLEFT" x="0" y="-5" />
+					<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOM" x="-20" y="5" />
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						self.check.prefix = "healthbar";
+						self.yOffSet.prefix = "healthbar";
+						self.xOffSet.prefix = "healthbar";
+					</OnLoad>
+				</Scripts>
+			</Frame>
+			<!-- MANA OPTION -->
+			<Frame name="$parentManaOptions" parentKey="manaOptions" inherits="AbbreviatedStatusOptionFrameTemplate">
+				<Anchors>
+					<Anchor point="TOPRIGHT" relativeTo="$parentTitleSeparator" relativePoint="TOPRIGHT" x="0" y="-5" />
+					<Anchor point="BOTTOMLEFT" relativePoint="BOTTOM" x="-20" y="5" />
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						self.check.prefix = "manabar";
+						self.yOffSet.prefix = "manabar";
+						self.xOffSet.prefix = "manabar";
+					</OnLoad>
+				</Scripts>
+			</Frame>
+		</Frames>
+	</Frame>
+	<!-- SETUNIT OPTION -->
+	<Frame name="AbbreviatedStatusOptionUnitTemplate" virtual="true">
+		<Layers>
+			<Layer level="ARTWORK">
+				<FontString name="$parentTitle" inherits="GameFontNormalLarge" justifyH="LEFT" justifyV="TOP">
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset>
+								<AbsDimension x="16" y="-16" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<Texture name="$parentSeparator" inherits="SeparatorTextureOptionTemplate" />
+			</Layer>
+		</Layers>
+		<Frames>
+			<Frame name="$parentStatus" inherits="AbbreviatedStatusOptionTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentTitle" relativePoint="TOPLEFT" x="0" y="-60" />
+					<Anchor point="BOTTOMRIGHT" relativePoint="RIGHT" x="0" y="40" />
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						self.type = "status"
+						self.title.text:SetText(ABBREVIATED_STATUS_OPTION_STATUS)
+						AbbreviatedStatusOptionCheckButton_InitializeWidget(self.healthOptions.check, "health", "enable")
+						AbbreviatedStatusOptionCheckButton_InitializeWidget(self.manaOptions.check, "mana", "enable")
+					</OnLoad>
+				</Scripts>
+			</Frame>
+			<Frame name="$parentPercent" inherits="AbbreviatedStatusOptionTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentStatus" relativePoint="BOTTOMLEFT" x="0" y="0" />
+					<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="100" />
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						self.type = "percent"
+						self.title.text:SetText(ABBREVIATED_STATUS_OPTION_PERCENT)
+						AbbreviatedStatusOptionCheckButton_InitializeWidget(self.healthOptions.check, "health", "enable")
+						AbbreviatedStatusOptionCheckButton_InitializeWidget(self.manaOptions.check, "mana", "enable")
+					</OnLoad>
+				</Scripts>
+			</Frame>
+		</Frames>
+	</Frame>
+	<!-- MAINOPTION PANEL -->
+	<Frame name="AbbreviatedStatusOption" parent="InterfaceOptionsFramePanelContainer">
+		<Layers>
+			<Layer level="ARTWORK">
+				<FontString name="$parentTitle" text="Abbreviated Status" inherits="GameFontNormalLarge" justifyH="LEFT" justifyV="TOP">
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset>
+								<AbsDimension x="16" y="-16" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<FontString name="$parentVersion" parentKey="version" inherits="GameFontNormalMed3" justifyH="RIGHT" justifyV="TOP">
+					<Anchors>
+						<Anchor point="TOPRIGHT">
+							<Offset>
+								<AbsDimension x="-16" y="-16" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<Texture name="$parentSeparator" inherits="SeparatorTextureOptionTemplate" />
+			</Layer>
+		</Layers>
+		<Frames>
+			<Slider name="$parentRemainder" parentKey="remainder" inherits="AbbreviatedStatusOptionSliderTemplate" minValue="1" maxValue="3" valueStep="1">
+				<Anchors>
+					<Anchor point="TOPLEFT" x="60" y="-100" />
+				</Anchors>
+				<Scripts>
+					<OnLoad inherit="prepend">
+						self.lable = _G[self:GetName().."Text"];
+						self.lowLable = _G[self:GetName().."Low"];
+						self.maxLable = _G[self:GetName().."High"];
+						AbbreviatedStatusOptionSlider_InitializeWidget(self, "remainder", nil, nil, function(self)
                 local currentValue = AbbreviatedStatusOption_GetRemainder();
                 self.value:SetText(format("%.f", currentValue));
                 self:SetValue(currentValue);
                 AbbreviatedStatusOption_ApplySetting(self:GetParent().GeneralFrames);
-            end)
-          </OnLoad>
-        </Scripts>
-      </Slider>
-    </Frames>
-    <Scripts>
-      <OnLoad function="AbbreviatedStatusOption_OnLoad"/>
-      <OnEvent function="AbbreviatedStatusOption_OnEven"/>
-    </Scripts>
-  </Frame>
-  <!-- SUBOPTION PANEL -->
-  <Frame name="AbbreviatedStatusSubOption">
-    <Frames>
-      <!-- PLAYER -->
-      <Frame name="$parentPlayer" parentKey="player" inherits="AbbreviatedStatusOptionUnitTemplate">
-        <Scripts>
-          <OnLoad>
-            self.unit = "player";
-            AbbreviatedStatusSubOption_OnLoad( self );
-          </OnLoad>
-        </Scripts>
-      </Frame>
-      <!-- PET -->
-      <Frame name="$parentPet" parentKey="pet" inherits="AbbreviatedStatusOptionUnitTemplate">
-        <Scripts>
-          <OnLoad>
-            self.unit = "pet";
-            AbbreviatedStatusSubOption_OnLoad( self );
-          </OnLoad>
-        </Scripts>
-      </Frame>
-      <!-- TARGET -->
-      <Frame name="$parentTarget" parentKey="target" inherits="AbbreviatedStatusOptionUnitTemplate">
-        <Scripts>
-          <OnLoad>
-            self.unit = "target";
-            AbbreviatedStatusSubOption_OnLoad( self );
-          </OnLoad>
-        </Scripts>
-      </Frame>
-      <!-- FOCUS -->
-      <Frame name="$parentFocus" parentKey="focus" inherits="AbbreviatedStatusOptionUnitTemplate">
-        <Scripts>
-          <OnLoad>
-            self.unit = "focus";
-            AbbreviatedStatusSubOption_OnLoad( self );
-          </OnLoad>
-        </Scripts>
-      </Frame>
-      <!-- PARTY -->
-      <Frame name="$parentParty" parentKey="party" inherits="AbbreviatedStatusOptionUnitTemplate">
-        <Scripts>
-          <OnLoad>
-            self.unit = "party";
-            AbbreviatedStatusSubOption_OnLoad( self );
-          </OnLoad>
-        </Scripts>
-      </Frame>
-      <!-- ARENA -->
-      <Frame name="$parentArena" parentKey="arena" inherits="AbbreviatedStatusOptionUnitTemplate">
-        <Scripts>
-          <OnLoad>
-            self.unit = "arena";
-            AbbreviatedStatusSubOption_OnLoad( self );
-          </OnLoad>
-        </Scripts>
-      </Frame>
-    </Frames>
-  </Frame>
+						end)
+					</OnLoad>
+				</Scripts>
+			</Slider>
+		</Frames>
+		<Scripts>
+			<OnLoad function="AbbreviatedStatusOption_OnLoad" />
+			<OnEvent function="AbbreviatedStatusOption_OnEven" />
+		</Scripts>
+	</Frame>
+	<!-- SUBOPTION PANEL -->
+	<Frame name="AbbreviatedStatusSubOption">
+		<Frames>
+			<!-- PLAYER -->
+			<Frame name="$parentPlayer" parentKey="player" inherits="AbbreviatedStatusOptionUnitTemplate">
+				<Scripts>
+					<OnLoad>
+						self.unit = "player";
+						AbbreviatedStatusSubOption_OnLoad( self );
+					</OnLoad>
+				</Scripts>
+			</Frame>
+			<!-- PET -->
+			<Frame name="$parentPet" parentKey="pet" inherits="AbbreviatedStatusOptionUnitTemplate">
+				<Scripts>
+					<OnLoad>
+						self.unit = "pet";
+						AbbreviatedStatusSubOption_OnLoad( self );
+					</OnLoad>
+				</Scripts>
+			</Frame>
+			<!-- TARGET -->
+			<Frame name="$parentTarget" parentKey="target" inherits="AbbreviatedStatusOptionUnitTemplate">
+				<Scripts>
+					<OnLoad>
+						self.unit = "target";
+						AbbreviatedStatusSubOption_OnLoad( self );
+					</OnLoad>
+				</Scripts>
+			</Frame>
+			<!-- FOCUS -->
+			<Frame name="$parentFocus" parentKey="focus" inherits="AbbreviatedStatusOptionUnitTemplate">
+				<Scripts>
+					<OnLoad>
+						self.unit = "focus";
+						AbbreviatedStatusSubOption_OnLoad( self );
+					</OnLoad>
+				</Scripts>
+			</Frame>
+			<!-- PARTY -->
+			<Frame name="$parentParty" parentKey="party" inherits="AbbreviatedStatusOptionUnitTemplate">
+				<Scripts>
+					<OnLoad>
+						self.unit = "party";
+						AbbreviatedStatusSubOption_OnLoad( self );
+					</OnLoad>
+				</Scripts>
+			</Frame>
+			<!-- ARENA -->
+			<Frame name="$parentArena" parentKey="arena" inherits="AbbreviatedStatusOptionUnitTemplate">
+				<Scripts>
+					<OnLoad>
+						self.unit = "arena";
+						AbbreviatedStatusSubOption_OnLoad( self );
+					</OnLoad>
+				</Scripts>
+			</Frame>
+		</Frames>
+	</Frame>
 </Ui>
