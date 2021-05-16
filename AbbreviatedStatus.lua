@@ -21,14 +21,12 @@ local NUMBER_ABBREVIATION_DATA = {
     { breakpoint = 10000,            abbreviation = FIRST_NUMBER_CAP_NO_SPACE,        significandDivisor = 1000,           fractionDivisor = 1  },
     { breakpoint = 1000,             abbreviation = FIRST_NUMBER_CAP_NO_SPACE,        significandDivisor = 100,            fractionDivisor = 10 },
 };
---  1        2                3
--- 1000, 1000*10 = 10000, 1000*100 = 100000
--- 1000 * 1*n, 1000 * 2*n, 1000 * 3*n
+
 local function FinalValueWithRemainder(remainder, value, data)
     return string.format("%."..remainder.."f", (value / data.significandDivisor) / data.fractionDivisor);
 end
 
-function AbbreviateNumbers(value, remainder, NumberCNS )
+function AbbreviateNumbers(value, remainder)
     for i, data in ipairs(NUMBER_ABBREVIATION_DATA) do
         if ( value >= data.breakpoint ) then
             local finalValue;
@@ -54,7 +52,7 @@ local function Abbreviated_UpdateTextString(self)
     local value = self:GetValue();
     local remainder = AbbreviatedStatusOption_GetRemainder();
     local statusText = self.TextString;
-    local stringText = AbbreviateNumbers(value, remainder, NumberCNS);
+    local stringText = AbbreviateNumbers(value, remainder);
     local percText = string.format("%.f%%", value/valueMax*100);
     local precentText = self.TextPercent and self.TextPercent.text;
 
@@ -86,7 +84,7 @@ local function Abbreviated_UpdateTextString(self)
         self.updatePoint = true;
     end
 
-    if ( cvarStatus) then
+    if ( cvarStatus ) then
         AbbreviatedStatusOption_SetText(statusText, unit, stringText);
         if ( barType == "manabar" and ( not UnitIsConnected(unit) or UnitIsDeadOrGhost(unit) ) ) then
             statusText:Hide();
