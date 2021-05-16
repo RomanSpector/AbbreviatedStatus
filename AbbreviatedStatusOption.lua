@@ -3,7 +3,7 @@ local AbbreviatedStatus = LibStub("AceAddon-3.0"):NewAddon("AbbreviatedStatus", 
 local AceDB = LibStub("AceDB-3.0");
 local addon, ns = ...;
 local version = GetAddOnMetadata(addon, "Version");
-local PROFILES;
+local PROFILE;
 local DEFAULT_PROFILE = ns:GetDefaultProfile();
 -- Required key/value pairs:
 -- .optionName - String, name of option
@@ -13,7 +13,7 @@ local DEFAULT_PROFILE = ns:GetDefaultProfile();
 
 function AbbreviatedStatus:OnInitialize()
 	self.db = AceDB:New("AbbreviatedStatusDB");
-	PROFILES = self.db.global;
+	PROFILE = self.db.global;
 
     if ( not ROMANSPECTOR_DISCORD ) then
         ROMANSPECTOR_DISCORD = true;
@@ -66,8 +66,8 @@ function AbbreviatedStatusOption_DefaultCallback(self)
 end
 
 function AbbreviatedStatusOption_ResetToDefaults()
-    table.remove(PROFILES, 1);
-	table.insert(PROFILES, DEFAULT_PROFILE);
+    table.remove(PROFILE, 1);
+	table.insert(PROFILE, DEFAULT_PROFILE);
     AbbreviatedStatusOption_UpdateCurrentPanel();
 end
 
@@ -78,11 +78,6 @@ end
 
 function AbbreviatedStatusOptions_SetUnit(self)
     local statusFrame, percentFrame = self:GetChildren();
-
-    if ( self.unit == "partypet" ) then
-        statusFrame.manaOptions:Hide();
-        percentFrame.manaOptions:Hide();
-    end
 
     AbbreviatedStatusOptions_SetCVar(statusFrame, self.unit);
     AbbreviatedStatusOptions_SetCVar(percentFrame, self.unit);
@@ -109,9 +104,9 @@ function AbbreviatedStatusSubOption_OnLoad(self)
 end
 
 function AbbreviatedStatusOption_ValidateProfilesLoaded()
-    if ( #PROFILES == 0 ) then
+    if ( #PROFILE == 0 ) then
         local profile = CopyTable(DEFAULT_PROFILE);
-        table.insert(PROFILES, profile);
+        table.insert(PROFILE, profile);
     end
     AbbreviatedStatusOption_UpdateCurrentPanel();
 end
@@ -165,13 +160,13 @@ end
 function AbbreviatedStatusOptionChekButton_SetEnable(self)
     self:GetParent().xOffSet:Enable();
     self:GetParent().yOffSet:Enable();
-    self.label:SetFontObject(GameFontHighlightLeft);
+    self.label:SetFontObject(GameFontNormal);
 end
 
 function AbbreviatedStatusOptionChekButton_SetDisable(self)
     self:GetParent().xOffSet:Disable();
     self:GetParent().yOffSet:Disable();
-    self.label:SetFontObject(GameFontNormalLeftRed);
+    self.label:SetFontObject(GameFontNormalMed3); --  GameFontHighlight
 end
 
 function AbbreviatedStatusOption_GetOptionFrame(self)
@@ -193,7 +188,7 @@ end
 function AbbreviatedStatusOptionSlider_InitializeWidget(self, optionName, minText, maxText, updateFunc)
 	self.optionName = optionName;
 	local tag = format("ABBREVIATED_STATUS_OPTION_%s", strupper(optionName));
-	self.lable:SetText(_G[tag] or "Need string: "..tag);
+	self.label:SetText(_G[tag] or "Need string: "..tag);
     if ( minText ) then
 		self.lowLable:SetText(minText);
 	end
@@ -213,18 +208,33 @@ function AbbreviatedStatusOptionSlider_Update(self)
     AbbreviatedStatusOption_ApplySetting(AbbreviatedStatusOption_GetParent(self).GeneralFrame);
 end
 
-function AbbreviatedStatusOptionSlider_OnValueChanged(self, value)
-    if ( self.optionName == "remainder" ) then
-        self.value:SetText(format("%.f", value));
-        AbbreviatedStatusOptionSet_Remainer(value);
-    else
-        local optionFrame = AbbreviatedStatusOption_GetOptionFrame(self);
-        self.value:SetText(format("%.1f", value));
-        AbbreviatedStatusSetProfileOption(optionFrame.unit, self.prefix, optionFrame.type, self.optionName, value);
-        AbbreviatedStatusOption_ApplySetting(AbbreviatedStatusOption_GetParent(self).GeneralFrame);
-    end
-end
+do
 
+    local NUMBER_ABBREVIATION = { 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000 };
+    local GetAbbreviationNumber = function(value)
+        return NUMBER_ABBREVIATION[value];
+    end
+
+    function AbbreviatedStatusOptionSlider_OnValueChanged(self, value)
+        if ( self.generalOptions ) then
+            if ( self.optionName == "prefix" ) then
+                local currentValue = GetAbbreviationNumber(value > 3 and value - 2 or 1);
+                value = value == 2 and 3 or value;
+                self:SetValue(value);
+                self.label:SetFontObject(value==1 and GameFontNormalLeftGrey or GameFontHighlightLeft);
+                self.label:SetText( string.format(ABBREVIATED_STATUS_OPTION_PREFIX, AbbreviateNumbers(currentValue)) );
+            end
+            self.value:SetText(format("%.f", value));
+            AbbreviatedStatusOption_SetGeneralValue(self.optionName, value);
+        else
+            local optionFrame = AbbreviatedStatusOption_GetOptionFrame(self);
+            self.value:SetText(format("%.1f", value));
+            AbbreviatedStatusSetProfileOption(optionFrame.unit, self.prefix, optionFrame.type, self.optionName, value);
+            AbbreviatedStatusOption_ApplySetting(AbbreviatedStatusOption_GetParent(self).GeneralFrame);
+        end
+    end
+
+end
 -------------------------------------------------------------
 -----------------Applying of Options----------------------
 -------------------------------------------------------------
@@ -234,11 +244,11 @@ local PLAYER_OFFLINE = PLAYER_OFFLINE;
 local DEAD = DEAD;
 
 function AbbreviatedStatusSetProfileOption(unit, prefix, type, optionName, value)
-    if not ( PROFILES and unit) then
+    if not ( PROFILE and unit) then
         return;
     end
 
-    local option = PROFILES[1][unit];
+    local option = PROFILE[1][unit];
     for barType, subOption in pairs(option) do
         if ( barType == prefix ) then
             subOption[type][optionName] = value;
@@ -247,40 +257,42 @@ function AbbreviatedStatusSetProfileOption(unit, prefix, type, optionName, value
 
 end
 
-function AbbreviatedStatusOptionSet_Remainer(value)
-    if ( not PROFILES ) then
+function AbbreviatedStatusOption_SetGeneralValue(optionName, value)
+    if ( not PROFILE ) then
         return;
     end
-    PROFILES[1].remainder = value;
+
+    PROFILE[1][optionName] = value;
     AbbreviatedStatusOption_UpdateUnits(AbbreviatedStatusOption);
 end
 
 function AbbreviatedStatusGetProfileOption(unit, prefix, type, optionName)
-    if ( not PROFILES ) then
+    if ( not PROFILE ) then
         return 0;
     end
-    local option = PROFILES[1][unit];
+
+    local option = PROFILE[1][unit];
     for barType, subOption in pairs(option) do
         if ( barType == prefix ) then
             return subOption[type][optionName];
         end
     end
-
 end
 
 function AbbreviatedStatusGetUnitOption(unit)
-    if ( not PROFILES ) then
+    if ( not PROFILE ) then
         return;
     end
-    return PROFILES[1][unit];
+
+    return PROFILE[1][unit];
 end
 
-function AbbreviatedStatusOption_GetRemainder()
-    if ( not PROFILES ) then
+function AbbreviatedStatusOption_GetGeneralValue(optionName)
+    if ( not PROFILE ) then
         return 1;
     end
 
-    return PROFILES[1].remainder;
+    return PROFILE[1][optionName] or 1;
 end
 
 function AbbreviatedStatusOption_UpdateCurrentPanel()
@@ -297,7 +309,7 @@ function AbbreviatedStatusOption_UpdateUnits(self)
 end
 
 function AbbreviatedStatusOption_ApplySetting(GeneralFrame)
-    assert(GeneralFrame, "AbbreviatedStatusOption_ApplySetting: not found GeneralFrame");
+    assert(GeneralFrame, "AbbreviatedStatus: Cannot find an GeneralFrame");
 
      for key in pairs(GeneralFrame) do
         if ( type(key) ~= "number" ) then
@@ -309,10 +321,10 @@ function AbbreviatedStatusOption_ApplySetting(GeneralFrame)
 end
 
 function AbbreviatedStatus_GetCVarBool(unit, barType)
-    if ( not PROFILES) then
+    if ( not PROFILE) then
         return;
     end
-    local options = PROFILES[1][unit];
+    local options = PROFILE[1][unit];
     local cvarStatus, cvarPecernt;
     for key,value in pairs(options) do
         if ( key == barType ) then
@@ -325,12 +337,12 @@ function AbbreviatedStatus_GetCVarBool(unit, barType)
 end
 
 function AbbreviatedStatusOption_GetPoint(unit, barType, status)
-    if ( not PROFILES) then
+    if ( not PROFILE) then
         return 0, 0;
     end
 
     local xOff, yOff;
-    local options = PROFILES[1][unit];
+    local options = PROFILE[1][unit];
 
     for key, value in pairs(options) do
         if ( key == barType ) then

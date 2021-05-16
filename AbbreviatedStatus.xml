@@ -45,7 +45,7 @@
 		</HitRectInsets>
 		<Layers>
 			<Layer level="ARTWORK">
-				<FontString name="$parentLabel" inherits="GameFontHighlightLeft" parentKey="label">
+				<FontString name="$parentLabel" inherits="GameFontNormal" parentKey="label">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="RIGHT">
 							<Offset>
@@ -68,12 +68,14 @@
 	</CheckButton>
 	<!-- SLIDER -->
 	<Slider name="AbbreviatedStatusOptionSliderTemplate" minValue="-5" maxValue="5" valueStep="0.1" inherits="OptionsSliderTemplate" virtual="true">
-		<Size x="194" y="17" />
+		<Size>
+			<AbsDimension x="194" y="17" />
+		</Size>
 		<Layers>
 			<Layer level="ARTWORK">
 				<FontString name="$parentValue" inherits="GameFontHighlightSmall" parentKey="value">
 					<Anchors>
-						<Anchor point="TOP" relativePoint="BOTTOM" x="0" y="0" />
+						<Anchor point="TOP" relativePoint="BOTTOM" />
 					</Anchors>
 				</FontString>
 			</Layer>
@@ -81,13 +83,13 @@
 		<Scripts>
 			<OnEnable>
 				self.value:SetFontObject(GameFontHighlightLeft);
-				self.lable:SetFontObject(GameFontHighlightLeft);
+				self.label:SetFontObject(GameFontHighlightLeft);
 				self.lowLable:SetFontObject(GameFontHighlightLeft);
 				self.maxLable:SetFontObject(GameFontHighlightLeft);
 			</OnEnable>
 			<OnDisable>
 				self.value:SetFontObject(GameFontDisableLeft);
-				self.lable:SetFontObject(GameFontDisableLeft);
+				self.label:SetFontObject(GameFontDisableLeft);
 				self.lowLable:SetFontObject(GameFontDisableLeft);
 				self.maxLable:SetFontObject(GameFontDisableLeft);
 			</OnDisable>
@@ -127,7 +129,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad inherit="prepend">
-						self.lable = _G[self:GetName().."Text"];
+						self.label = _G[self:GetName().."Text"];
 						self.lowLable = _G[self:GetName().."Low"]
 						self.maxLable = _G[self:GetName().."High"]
 						AbbreviatedStatusOptionSlider_InitializeWidget(self, "xOff", ABBREVIATED_STATUS_OPTION_LEFT, ABBREVIATED_STATUS_OPTION_RIGHT)
@@ -140,7 +142,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad inherit="prepend">
-						self.lable = _G[self:GetName().."Text"];
+						self.label = _G[self:GetName().."Text"];
 						self.lowLable = _G[self:GetName().."Low"]
 						self.maxLable = _G[self:GetName().."High"]
 						AbbreviatedStatusOptionSlider_InitializeWidget(self, "yOff", ABBREVIATED_STATUS_OPTION_DOWN, ABBREVIATED_STATUS_OPTION_UP)
@@ -274,22 +276,53 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad inherit="prepend">
-						self.lable = _G[self:GetName().."Text"];
+						self.label = _G[self:GetName().."Text"];
 						self.lowLable = _G[self:GetName().."Low"];
 						self.maxLable = _G[self:GetName().."High"];
+						self.generalOptions = true;
 						AbbreviatedStatusOptionSlider_InitializeWidget(self, "remainder", nil, nil, function(self)
-                local currentValue = AbbreviatedStatusOption_GetRemainder();
-                self.value:SetText(format("%.f", currentValue));
-                self:SetValue(currentValue);
-                AbbreviatedStatusOption_UpdateUnits(self:GetParent());
+								local currentValue = AbbreviatedStatusOption_GetGeneralValue(self.optionName);
+								self.value:SetText(format("%.f", currentValue));
+								self:SetValue(currentValue);
+								AbbreviatedStatusOption_UpdateUnits(self:GetParent());
+						end)
+					</OnLoad>
+				</Scripts>
+			</Slider>
+			<Slider name="$parentPrefix" parentKey="prefix" inherits="AbbreviatedStatusOptionSliderTemplate" minValue="1" maxValue="9" valueStep="1">
+				<Anchors>
+					<Anchor point="TOP" relativeTo="$parentRemainder" parentKey="prefix" relativePoint="BOTTOM" x="0" y="-60" />
+				</Anchors>
+				<Layers>
+					<Layer level="ARTWORK">
+						<FontString name="$parentEnable" inherits="GameFontHighlightSmall" text="ABBREVIATED_LOCK_STATUS" parentKey="enable">
+							<Anchors>
+								<Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" />
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnLoad inherit="prepend">
+						self.label = _G[self:GetName().."Text"];
+						self.lowLable = _G[self:GetName().."Low"];
+						self.maxLable = _G[self:GetName().."High"];
+						self.lowLable:ClearAllPoints();
+						self.lowLable:SetPoint("TOPLEFT", self, "BOTTOMLEFT", 40, 0);
+						self.value:Hide()
+						self.generalOptions = true;
+						AbbreviatedStatusOptionSlider_InitializeWidget(self, "prefix", nil, nil, function(self)
+								local currentValue = AbbreviatedStatusOption_GetGeneralValue(self.optionName) or 1;
+								self.value:SetText(format("%.f", currentValue));
+								self:SetValue(currentValue);
 						end)
 					</OnLoad>
 				</Scripts>
 			</Slider>
 		</Frames>
 		<Scripts>
-			<OnLoad function="AbbreviatedStatusOption_OnLoad"/>
-			<OnEvent function="AbbreviatedStatusOption_OnEven"/>
+			<OnLoad function="AbbreviatedStatusOption_OnLoad" />
+			<OnEvent function="AbbreviatedStatusOption_OnEven" />
 		</Scripts>
 	</Frame>
 	<!-- SUBOPTION PANEL -->
