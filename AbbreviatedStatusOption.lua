@@ -5,7 +5,6 @@ local addon, ns = ...;
 local version = GetAddOnMetadata(addon, "Version");
 local PROFILES;
 local DEFAULT_PROFILE = ns:GetDefaultProfile();
-
 -- Required key/value pairs:
 -- .optionName - String, name of option
 -- .options - Array, array of possible options
@@ -21,7 +20,7 @@ function AbbreviatedStatus:OnInitialize()
         DEFAULT_CHAT_FRAME:AddMessage("|cffbaf5aeAbbreviatedStatus|r: even more useful addons in my Discord group |cff44d3e3https://discord.gg/wXw6pTvxMQ|r");
     end
 
-    AbbreviatedStatusOption_ValidateProfilesLoaded()
+    AbbreviatedStatusOption_ValidateProfilesLoaded();
 end
 
 function AbbreviatedStatusOption_GenerationFrame(string, releaseFunc)
@@ -32,9 +31,9 @@ function AbbreviatedStatusOption_OnLoad(self)
     self.name = "AbbreviatedStatus";
     self.version:SetText((ABBREVIATED_STATUS_OPTION_VERSION):format(version));
 
-    local unitFrameReleaseFunc = function(self)
-        local manabar = _G[self.manabar];
-        local healthbar = _G[self.healthbar];
+    local unitFrameReleaseFunc = function(this)
+        local manabar = _G[this.manabar];
+        local healthbar = _G[this.healthbar];
         if ( manabar ) then
             TextStatusBar_UpdateTextString(manabar);
         end
@@ -44,10 +43,10 @@ function AbbreviatedStatusOption_OnLoad(self)
     end
 
     local unitFrames = {
-        player = AbbreviatedStatusOption_GenerationFrame("PlayerFrame", unitFrameReleaseFunc),
-        pet = AbbreviatedStatusOption_GenerationFrame("PetFrame", unitFrameReleaseFunc),
-        target = AbbreviatedStatusOption_GenerationFrame("TargetFrame", unitFrameReleaseFunc),
-        focus = AbbreviatedStatusOption_GenerationFrame("FocusFrame", unitFrameReleaseFunc),
+        player  = AbbreviatedStatusOption_GenerationFrame("PlayerFrame", unitFrameReleaseFunc),
+        pet     = AbbreviatedStatusOption_GenerationFrame("PetFrame", unitFrameReleaseFunc),
+        target  = AbbreviatedStatusOption_GenerationFrame("TargetFrame", unitFrameReleaseFunc),
+        focus   = AbbreviatedStatusOption_GenerationFrame("FocusFrame", unitFrameReleaseFunc),
     };
     unitFrames.party = { };
     unitFrames.arena = { };
@@ -73,7 +72,7 @@ function AbbreviatedStatusOption_ResetToDefaults()
 end
 
 function AbbreviatedStatusOptions_SetCVar(self, unit)
-    self.cvar = "STATUS_TEXT_"..strupper(unit)
+    self.cvar = "STATUS_TEXT_"..strupper(unit);
     self.unit = unit;
 end
 
@@ -117,7 +116,7 @@ function AbbreviatedStatusOption_ValidateProfilesLoaded()
     AbbreviatedStatusOption_UpdateCurrentPanel();
 end
 --------------------------------------------------------------
------------------UI Option Templates---------------------
+----------------- UI Option Templates    ---------------------
 --------------------------------------------------------------
 function AbbreviatedStatusProfileOption_OnLoad(self)
     local parent = AbbreviatedStatusOption;
@@ -128,7 +127,7 @@ function AbbreviatedStatusProfileOption_OnLoad(self)
 	tinsert(parent.optionControls, self);
 end
 -------------------------------
--------Check Button---------
+-------  Check Button ---------
 -------------------------------
 function AbbreviatedStatusOptionCheckButton_InitializeWidget(self, optionName, array)
 	self.optionName = array;
@@ -140,7 +139,7 @@ function AbbreviatedStatusOptionCheckButton_InitializeWidget(self, optionName, a
     AbbreviatedStatusProfileOption_OnLoad(self);
 end
 
-function AbbreviatedStatusOptionCheckButton_OnEven(self, event, name, value)
+function AbbreviatedStatusOptionCheckButton_OnEvent(self, event, name, value)
     local optionFrame = AbbreviatedStatusOption_GetOptionFrame(self);
     if ( event == "CVAR_UPDATE" and name == optionFrame.cvar ) then
         AbbreviatedStatusOptionCheckButton_OnClick(self, "LeftButton", value);
@@ -298,9 +297,7 @@ function AbbreviatedStatusOption_UpdateUnits(self)
 end
 
 function AbbreviatedStatusOption_ApplySetting(GeneralFrame)
-    if ( not GeneralFrame ) then
-        return;
-    end
+    assert(GeneralFrame, "AbbreviatedStatusOption_ApplySetting: not found GeneralFrame");
 
      for key in pairs(GeneralFrame) do
         if ( type(key) ~= "number" ) then
@@ -329,11 +326,12 @@ end
 
 function AbbreviatedStatusOption_GetPoint(unit, barType, status)
     if ( not PROFILES) then
-        return;
+        return 0, 0;
     end
 
-    local options = PROFILES[1][unit];
     local xOff, yOff;
+    local options = PROFILES[1][unit];
+
     for key, value in pairs(options) do
         if ( key == barType ) then
             xOff = value[status].xOff;

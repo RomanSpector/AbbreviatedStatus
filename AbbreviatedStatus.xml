@@ -58,7 +58,7 @@
 		</Layers>
 		<Scripts>
 			<OnClick function="AbbreviatedStatusOptionCheckButton_OnClick" />
-			<OnEvent function="AbbreviatedStatusOptionCheckButton_OnEven" />
+			<OnEvent function="AbbreviatedStatusOptionCheckButton_OnEvent" />
 		</Scripts>
 		<NormalTexture file="Interface\Buttons\UI-CheckBox-Up" />
 		<PushedTexture file="Interface\Buttons\UI-CheckBox-Down" />
@@ -281,15 +281,15 @@
                 local currentValue = AbbreviatedStatusOption_GetRemainder();
                 self.value:SetText(format("%.f", currentValue));
                 self:SetValue(currentValue);
-                AbbreviatedStatusOption_ApplySetting(self:GetParent().GeneralFrames);
+                AbbreviatedStatusOption_UpdateUnits(self:GetParent());
 						end)
 					</OnLoad>
 				</Scripts>
 			</Slider>
 		</Frames>
 		<Scripts>
-			<OnLoad function="AbbreviatedStatusOption_OnLoad" />
-			<OnEvent function="AbbreviatedStatusOption_OnEven" />
+			<OnLoad function="AbbreviatedStatusOption_OnLoad"/>
+			<OnEvent function="AbbreviatedStatusOption_OnEven"/>
 		</Scripts>
 	</Frame>
 	<!-- SUBOPTION PANEL -->
