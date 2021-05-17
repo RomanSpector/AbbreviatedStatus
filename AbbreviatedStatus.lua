@@ -80,14 +80,11 @@ local function Abbreviated_UpdateTextString(self)
         precentText:SetText(percText);
         if ( not UnitIsConnected(unit) or UnitIsDeadOrGhost(unit) ) then
             precentText:Hide();
-            self.updatePoint = true;
         else
             precentText:Show();
-            self.updatePoint = true;
         end
     else
         precentText:Hide();
-        self.updatePoint = true;
     end
 
     if ( cvarStatus ) then
@@ -96,29 +93,23 @@ local function Abbreviated_UpdateTextString(self)
             statusText:Hide();
         elseif ( value == 0 and barType == "manabar" ) then
             statusText:Hide();
-            self.updatePoint = true;
         else
             statusText:Show();
-            self.updatePoint = true;
         end
     else
         statusText:Hide();
-        self.updatePoint = true;
     end
 
 
-    if ( self.updatePoint ) then
-        if ( cvarPecernt and cvarStatus ) then
-            AbbreviatedStatusOption_SetPosition(precentText, "LEFT", self, barType, "percent", unitType);
-            AbbreviatedStatusOption_SetPosition(statusText, "RIGHT", self, barType, "status", unitType);
-            if ( precentText and not precentText:IsShown() ) then
-                AbbreviatedStatusOption_SetPosition(statusText, "CENTER", self, barType, "status", unitType);
-            end
-        else
-            AbbreviatedStatusOption_SetPosition(precentText, "CENTER", self, barType, "percent", unitType);
+    if ( cvarPecernt and cvarStatus ) then
+        AbbreviatedStatusOption_SetPosition(precentText, "LEFT", self, barType, "percent", unitType);
+        AbbreviatedStatusOption_SetPosition(statusText, "RIGHT", self, barType, "status", unitType);
+        if ( precentText and not precentText:IsShown() ) then
             AbbreviatedStatusOption_SetPosition(statusText, "CENTER", self, barType, "status", unitType);
         end
-        self.updatePoint = false;
+    else
+        AbbreviatedStatusOption_SetPosition(precentText, "CENTER", self, barType, "percent", unitType);
+        AbbreviatedStatusOption_SetPosition(statusText, "CENTER", self, barType, "status", unitType);
     end
 
 end
