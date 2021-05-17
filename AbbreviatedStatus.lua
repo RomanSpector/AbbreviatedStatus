@@ -9,7 +9,7 @@
 local UnitIsDeadOrGhost = UnitIsDeadOrGhost;
 local UnitIsConnected = UnitIsConnected;
 ---------------------------------------------------------
-local NUMBER_ABBREVIATION_DATA = {
+NUMBER_ABBREVIATION_DATA = {
     -- Order these from largest to smallest
     -- (significandDivisor and fractionDivisor should multiply to be equal to breakpoint)
     { breakpoint = 10000000000000,   abbreviation = FOURTH_NUMBER_CAP_NO_SPACE,       significandDivisor = 1000000000000,  fractionDivisor = 1  },
@@ -22,27 +22,19 @@ local NUMBER_ABBREVIATION_DATA = {
     { breakpoint = 1000,             abbreviation = FIRST_NUMBER_CAP_NO_SPACE,        significandDivisor = 100,            fractionDivisor = 10 },
 };
 
-do
-
-    local NUMBER_ABBREVIATION = { 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000 };
-    local GetAbbreviationNumber = function(value)
-        return NUMBER_ABBREVIATION[value];
-    end
-
-    function AbbreviatedStatusNumbers(value)
-        local remainder = AbbreviatedStatusOption_GetGeneralValue("remainder");
-        local prefix = AbbreviatedStatusOption_GetGeneralValue("prefix");
-        for i, data in ipairs(NUMBER_ABBREVIATION_DATA) do
-            if ( value >= data.breakpoint ) then
-                local finalValue;
-                local currentValue = GetAbbreviationNumber(prefix)
-                finalValue = string.format("%."..remainder.."f", (value / data.significandDivisor) / data.fractionDivisor);
-                return ( prefix > 1 and currentValue <= data.breakpoint ) and finalValue .. data.abbreviation or finalValue;
-            end
+function AbbreviatedStatusNumbers(value)
+    local remainder = AbbreviatedStatusOption_GetGeneralValue("remainder");
+    local prefix = AbbreviatedStatusOption_GetGeneralValue("prefix");
+    local index = prefix >= 3 and prefix - 3 or 0;
+    for i, data in ipairs(NUMBER_ABBREVIATION_DATA) do
+        if ( value >= data.breakpoint ) then
+            local finalValue;
+            local currentValue = NUMBER_ABBREVIATION_DATA[#NUMBER_ABBREVIATION_DATA - index].breakpoint;
+            finalValue = string.format("%."..remainder.."f", (value / data.significandDivisor) / data.fractionDivisor);
+            return ( prefix > 1 and currentValue <= data.breakpoint ) and finalValue .. data.abbreviation or finalValue;
         end
-        return tostring(value)
     end
-
+    return tostring(value)
 end
 
 function AbbreviateNumbers(value)

@@ -107,6 +107,8 @@ function AbbreviatedStatusOption_ValidateProfilesLoaded()
     if ( #PROFILE == 0 ) then
         local profile = CopyTable(DEFAULT_PROFILE);
         table.insert(PROFILE, profile);
+    elseif PROFILE[1].version ~= version then
+        AbbreviatedStatusOption_ResetToDefaults()
     end
     AbbreviatedStatusOption_UpdateCurrentPanel();
 end
@@ -208,33 +210,29 @@ function AbbreviatedStatusOptionSlider_Update(self)
     AbbreviatedStatusOption_ApplySetting(AbbreviatedStatusOption_GetParent(self).GeneralFrame);
 end
 
-do
 
-    local NUMBER_ABBREVIATION = { 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000 };
-    local GetAbbreviationNumber = function(value)
-        return NUMBER_ABBREVIATION[value];
-    end
-
-    function AbbreviatedStatusOptionSlider_OnValueChanged(self, value)
-        if ( self.generalOptions ) then
-            if ( self.optionName == "prefix" ) then
-                local currentValue = GetAbbreviationNumber(value > 3 and value - 2 or 1);
-                value = value == 2 and 3 or value;
-                self:SetValue(value);
-                self.label:SetFontObject(value==1 and GameFontNormalLeftGrey or GameFontHighlightLeft);
-                self.label:SetText( string.format(ABBREVIATED_STATUS_OPTION_PREFIX, AbbreviateNumbers(currentValue)) );
-            end
-            self.value:SetText(format("%.f", value));
-            AbbreviatedStatusOption_SetGeneralValue(self.optionName, value);
-        else
-            local optionFrame = AbbreviatedStatusOption_GetOptionFrame(self);
-            self.value:SetText(format("%.1f", value));
-            AbbreviatedStatusSetProfileOption(optionFrame.unit, self.prefix, optionFrame.type, self.optionName, value);
-            AbbreviatedStatusOption_ApplySetting(AbbreviatedStatusOption_GetParent(self).GeneralFrame);
+function AbbreviatedStatusOptionSlider_OnValueChanged(self, value)
+    if ( self.generalOptions ) then
+        if ( self.optionName == "prefix" ) then
+            value = value == 2 and 3 or value;
+            local index = value >= 3 and value - 3 or 0;
+            assert(NUMBER_ABBREVIATION_DATA, "AbbreviatedStatus: Cannot find the table NUMBER_ABBREVIATION_DATA");
+            assert((#NUMBER_ABBREVIATION_DATA - index) > 0, "AbbreviatedStatus: NUMBER_ABBREVIATION_DATA table is corrupted, missing elements");
+            local currentValue = NUMBER_ABBREVIATION_DATA[#NUMBER_ABBREVIATION_DATA - index].breakpoint;
+            self:SetValue(value);
+            self.label:SetFontObject(value==1 and GameFontNormalLeftGrey or GameFontHighlightLeft);
+            self.label:SetText( string.format(ABBREVIATED_STATUS_OPTION_PREFIX, AbbreviateNumbers(currentValue)) );
         end
+        self.value:SetText(format("%.f", value));
+        AbbreviatedStatusOption_SetGeneralValue(self.optionName, value);
+    else
+        local optionFrame = AbbreviatedStatusOption_GetOptionFrame(self);
+        self.value:SetText(format("%.1f", value));
+        AbbreviatedStatusSetProfileOption(optionFrame.unit, self.prefix, optionFrame.type, self.optionName, value);
+        AbbreviatedStatusOption_ApplySetting(AbbreviatedStatusOption_GetParent(self).GeneralFrame);
     end
-
 end
+
 -------------------------------------------------------------
 -----------------Applying of Options----------------------
 -------------------------------------------------------------
@@ -309,7 +307,7 @@ function AbbreviatedStatusOption_UpdateUnits(self)
 end
 
 function AbbreviatedStatusOption_ApplySetting(GeneralFrame)
-    assert(GeneralFrame, "AbbreviatedStatus: Cannot find an GeneralFrame");
+    assert(GeneralFrame, "AbbreviatedStatus: Cannot find a GeneralFrame");
 
      for key in pairs(GeneralFrame) do
         if ( type(key) ~= "number" ) then

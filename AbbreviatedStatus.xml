@@ -289,7 +289,7 @@
 					</OnLoad>
 				</Scripts>
 			</Slider>
-			<Slider name="$parentPrefix" parentKey="prefix" inherits="AbbreviatedStatusOptionSliderTemplate" minValue="1" maxValue="9" valueStep="1">
+			<Slider name="$parentPrefix" parentKey="prefix" inherits="AbbreviatedStatusOptionSliderTemplate" minValue="1" maxValue="10" valueStep="1">
 				<Anchors>
 					<Anchor point="TOP" relativeTo="$parentRemainder" parentKey="prefix" relativePoint="BOTTOM" x="0" y="-60" />
 				</Anchors>

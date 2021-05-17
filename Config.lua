@@ -22,7 +22,7 @@ end
 function ns:GetDefaultProfile()
     return {
         version     = version,
-        isPrefix    = 1,
+        prefix    = 1,
         remainder   = 1,
         ["player"]  = AbbreviatedStatusOption_SetDefaultSetting(),
         ["pet"]     = AbbreviatedStatusOption_SetDefaultSetting(),
