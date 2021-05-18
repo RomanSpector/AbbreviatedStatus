@@ -22,7 +22,7 @@ end
 function ns:GetDefaultProfile()
     return {
         version     = version,
-        prefix    = 1,
+        prefix      = 3,
         remainder   = 1,
         ["player"]  = AbbreviatedStatusOption_SetDefaultSetting(),
         ["pet"]     = AbbreviatedStatusOption_SetDefaultSetting(),
@@ -32,3 +32,19 @@ function ns:GetDefaultProfile()
         ["arena"]   = AbbreviatedStatusOption_SetDefaultSetting()
     };
 end
+
+StaticPopupDialogs["DEFAULT_ABBREVIATED_STATUS"] = {
+    text    = DEFAULT_ABBREVIATED_STATUS,
+    button1 = CURRENT_SETTINGS,
+    button3 = DEFAULT_ABBREVIATED_ALL_PROFILE,
+	button2 = CANCEL,
+	OnAccept = function()
+		AbbreviatedStatusOption_SetCurrentToDefaults();
+	end,
+	OnAlt   = function()
+	    AbbreviatedStatusOption_SetAllToDefaults();
+	end,
+    OnCancel = function() end,
+    timeout = 0,
+	hideOnEscape = 1,
+};

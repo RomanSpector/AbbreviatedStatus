@@ -37,3 +37,6 @@ FOURTH_NUMBER_CAP_NO_SPACE = "T";
 THIRD_NUMBER_CAP_NO_SPACE = "МЛРД";
 SECOND_NUMBER_CAP_NO_SPACE = "М";
 FIRST_NUMBER_CAP_NO_SPACE = "к";
+
+DEFAULT_ABBREVIATED_STATUS = "Вы хотите сбросить настройки по умолчанию этого раздела или весь профиль?"
+DEFAULT_ABBREVIATED_ALL_PROFILE = "Весь профиль"

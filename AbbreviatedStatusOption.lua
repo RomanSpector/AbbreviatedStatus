@@ -58,22 +58,42 @@ function AbbreviatedStatusOption_OnLoad(self)
     end
 
     self.GeneralFrame = unitFrames;
+    BlizzardOptionsPanel_OnLoad(self, AbbreviatedStatusOption_DoesNothing, AbbreviatedStatusOption_DoesNothing, AbbreviatedStatusOption_DefaultCallback, AbbreviatedStatusOption_DoesNothing);
     InterfaceOptions_AddCategory(self);
 end
+
+function AbbreviatedStatusOption_DoesNothing() end
 
 function AbbreviatedStatusOption_DefaultCallback(self)
 	AbbreviatedStatusOption_ResetToDefaults();
 end
 
 function AbbreviatedStatusOption_ResetToDefaults()
+    StaticPopup_Show("DEFAULT_ABBREVIATED_STATUS");
+end
+
+function AbbreviatedStatusOption_SetCurrentToDefaults()
+    assert(PROFILE, "AbbreviatedStatus: Cannot find PROFILE table, create PROFILE and try again");
+    local profile = PROFILE[1];
+    profile.prefix = 3;
+    profile.remainder = 1;
+    profile.version = version;
+
+    AbbreviatedStatusOption_UpdateCurrentPanel();
+end
+
+function AbbreviatedStatusOption_SetAllToDefaults()
+    assert(PROFILE, "AbbreviatedStatus: Cannot find PROFILE table, create PROFILE and try again");
+    local default = ns:GetDefaultProfile()
     table.remove(PROFILE, 1);
-	table.insert(PROFILE, DEFAULT_PROFILE);
+    table.insert(PROFILE, default);
+
     AbbreviatedStatusOption_UpdateCurrentPanel();
 end
 
 function AbbreviatedStatusOptions_SetCVar(self, unit)
-    self.cvar = "STATUS_TEXT_"..strupper(unit);
     self.unit = unit;
+    self.cvar = "STATUS_TEXT_"..strupper(unit);
 end
 
 function AbbreviatedStatusOptions_SetUnit(self)
@@ -100,7 +120,21 @@ function AbbreviatedStatusSubOption_OnLoad(self)
     self.GeneralFrame = AbbreviatedStatusOption.GeneralFrame[self.unit];
 
     AbbreviatedStatusOptions_SetUnit(self);
+    BlizzardOptionsPanel_OnLoad(self, AbbreviatedStatusOption_DoesNothing, AbbreviatedStatusOption_DoesNothing, AbbreviatedStatusSubOption_DefaultCallback, AbbreviatedStatusOption_DoesNothing);
     InterfaceOptions_AddCategory(self);
+end
+
+function AbbreviatedStatusSubOption_DefaultCallback(self)
+    assert(PROFILE, "AbbreviatedStatus: Cannot find PROFILE table, create PROFILE and try again");
+    local default = AbbreviatedStatusOption_SetDefaultSetting();
+    local profile = PROFILE[1];
+    for unit in pairs(profile) do
+        if ( unit == self.unit ) then
+            profile[unit] = CopyTable(default);
+            break;
+        end
+    end
+    AbbreviatedStatusOption_UpdateCurrentPanel();
 end
 
 function AbbreviatedStatusOption_ValidateProfilesLoaded()

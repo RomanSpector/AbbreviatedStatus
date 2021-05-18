@@ -126,7 +126,7 @@ if not InterfaceOptionsFrameAddOns:IsMouseWheelEnabled() then
 	end)
 end
 
-InterfaceOptionsFrame:SetFrameStrata("FULLSCREEN_DIALOG")
+--InterfaceOptionsFrame:SetFrameStrata("FULLSCREEN_DIALOG")
 InterfaceOptionsFrame:SetResizable(true)
 InterfaceOptionsFrame:SetWidth(900)
 InterfaceOptionsFrame:SetMinResize(858, 660)
