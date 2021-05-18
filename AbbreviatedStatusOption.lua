@@ -84,7 +84,7 @@ end
 
 function AbbreviatedStatusOption_SetAllToDefaults()
     assert(PROFILE, "AbbreviatedStatus: Cannot find PROFILE table, create PROFILE and try again");
-    local default = ns:GetDefaultProfile()
+    local default = ns:GetDefaultProfile();
     table.remove(PROFILE, 1);
     table.insert(PROFILE, default);
 
@@ -141,8 +141,6 @@ function AbbreviatedStatusOption_ValidateProfilesLoaded()
     if ( #PROFILE == 0 ) then
         local profile = CopyTable(DEFAULT_PROFILE);
         table.insert(PROFILE, profile);
-    elseif PROFILE[1].version ~= version then
-        AbbreviatedStatusOption_ResetToDefaults()
     end
     AbbreviatedStatusOption_UpdateCurrentPanel();
 end
