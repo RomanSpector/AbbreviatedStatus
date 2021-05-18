@@ -107,15 +107,19 @@
 						<Anchor point="BOTTOMRIGHT" relativePoint="RIGHT" x="0" y="-3" />
 					</Anchors>
 				</Texture>
-				<FontString name="$parentText" inherits="GameFontNormalLarge" parentKey="text">
+				<FontString name="$parentText" inherits="GameFontNormalLarge" parentKey="text" justifyH="LEFT" justifyV="TOP">
 					<Anchors>
-						<Anchor point="BOTTOMLEFT" relativeTo="$parentSeparator" relativePoint="TOPLEFT" x="0" y="6" />
+						<Anchor point="BOTTOMLEFT" relativeTo="$parentSeparator" relativePoint="TOPLEFT">
+							<Offset>
+								<AbsDimension x="0" y="-6" />
+							</Offset>
+						</Anchor>
 					</Anchors>
 				</FontString>
 			</Layer>
 		</Layers>
 	</Frame>
-	<!-- SETFRAME OPTION -->
+ 	<!-- SETFRAME OPTION -->
 	<Frame name="AbbreviatedStatusOptionFrameTemplate" virtual="true">
 		<Frames>
 			<CheckButton name="$parentCheck" parentKey="check" inherits="AbbreviatedStatusOptionCheckButtonTemplate">
@@ -248,6 +252,7 @@
 	<Frame name="AbbreviatedStatusOption" parent="InterfaceOptionsFramePanelContainer">
 		<Layers>
 			<Layer level="ARTWORK">
+				<Texture name="$parentSeparator" inherits="SeparatorTextureOptionTemplate" />
 				<FontString name="$parentTitle" text="Abbreviated Status" inherits="GameFontNormalLarge" justifyH="LEFT" justifyV="TOP">
 					<Anchors>
 						<Anchor point="TOPLEFT">
@@ -257,7 +262,7 @@
 						</Anchor>
 					</Anchors>
 				</FontString>
-				<FontString name="$parentVersion" parentKey="version" inherits="GameFontNormalMed3" justifyH="RIGHT" justifyV="TOP">
+				<FontString name="$parentVersion" parentKey="version" inherits="GameFontNormalMed3" justifyH="LEFT" justifyV="TOP">
 					<Anchors>
 						<Anchor point="TOPRIGHT">
 							<Offset>
@@ -266,7 +271,6 @@
 						</Anchor>
 					</Anchors>
 				</FontString>
-				<Texture name="$parentSeparator" inherits="SeparatorTextureOptionTemplate" />
 			</Layer>
 		</Layers>
 		<Frames>
@@ -281,10 +285,10 @@
 						self.maxLable = _G[self:GetName().."High"];
 						self.generalOptions = true;
 						AbbreviatedStatusOptionSlider_InitializeWidget(self, "remainder", nil, nil, function(self)
-								local currentValue = AbbreviatedStatusOption_GetGeneralValue(self.optionName);
-								self.value:SetText(format("%.f", currentValue));
-								self:SetValue(currentValue);
-								AbbreviatedStatusOption_UpdateUnits(self:GetParent());
+						local currentValue = AbbreviatedStatusOption_GetGeneralValue(self.optionName);
+						self.value:SetText(format("%.f", currentValue));
+						self:SetValue(currentValue);
+						AbbreviatedStatusOption_UpdateUnits(self:GetParent());
 						end)
 					</OnLoad>
 				</Scripts>
@@ -312,9 +316,9 @@
 						self.value:Hide()
 						self.generalOptions = true;
 						AbbreviatedStatusOptionSlider_InitializeWidget(self, "prefix", nil, nil, function(self)
-								local currentValue = AbbreviatedStatusOption_GetGeneralValue(self.optionName) or 1;
-								self.value:SetText(format("%.f", currentValue));
-								self:SetValue(currentValue);
+						local currentValue = AbbreviatedStatusOption_GetGeneralValue(self.optionName) or 1;
+						self.value:SetText(format("%.f", currentValue));
+						self:SetValue(currentValue);
 						end)
 					</OnLoad>
 				</Scripts>
