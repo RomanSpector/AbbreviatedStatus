@@ -326,7 +326,6 @@
 		</Frames>
 		<Scripts>
 			<OnLoad function="AbbreviatedStatusOption_OnLoad" />
-			<OnEvent function="AbbreviatedStatusOption_OnEven" />
 		</Scripts>
 	</Frame>
 	<!-- SUBOPTION PANEL -->
