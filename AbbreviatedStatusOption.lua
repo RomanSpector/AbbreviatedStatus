@@ -103,8 +103,12 @@ function AbbreviatedStatusOptions_SetUnit(self)
     AbbreviatedStatusOptions_SetCVar(percentFrame, self.unit);
 end
 
-function AbbreviatedStatusOption_GetParent(self)
-    return self:GetParent():GetParent():GetParent();
+local function AbbFrameGetParent(frame, index)
+    while ( index > 0 ) do
+        frame = frame:GetParent();
+        index = index - 1;
+    end
+    return frame;
 end
 
 function AbbreviatedStatusSubOption_OnLoad(self)
@@ -180,7 +184,7 @@ function AbbreviatedStatusOptionCheckButton_Update(self)
 	local currentValue = AbbreviatedStatusGetProfileOption(optionFrame.unit, self.prefix, optionFrame.type, self.optionName);
 	self:SetChecked(currentValue);
     AbbreviatedStatusOptionChekButton_SetStatus(self);
-    AbbreviatedStatusOption_ApplySetting(AbbreviatedStatusOption_GetParent(self).GeneralFrame);
+    AbbreviatedStatusOption_ApplySetting(AbbFrameGetParent(self, 3).GeneralFrame);
 end
 
 function AbbreviatedStatusOptionChekButton_SetStatus(self)
@@ -214,7 +218,7 @@ function AbbreviatedStatusOptionCheckButton_OnClick(self, button, currentValue)
     local optionFrame = AbbreviatedStatusOption_GetOptionFrame(self);
     AbbreviatedStatusOptionChekButton_SetStatus(self);
 	AbbreviatedStatusSetProfileOption(optionFrame.unit, self.prefix, optionFrame.type, self.optionName, self:GetChecked() or false);
-    AbbreviatedStatusOption_ApplySetting(AbbreviatedStatusOption_GetParent(self).GeneralFrame);
+    AbbreviatedStatusOption_ApplySetting(AbbFrameGetParent(self, 3).GeneralFrame);
 end
 -------------------------------
 ------- Slider ----------------
@@ -239,7 +243,7 @@ function AbbreviatedStatusOptionSlider_Update(self)
 	local currentValue = AbbreviatedStatusGetProfileOption(optionFrame.unit, self.prefix, optionFrame.type, self.optionName);
     self.value:SetText(format("%.1f", currentValue));
     self:SetValue(currentValue);
-    AbbreviatedStatusOption_ApplySetting(AbbreviatedStatusOption_GetParent(self).GeneralFrame);
+    AbbreviatedStatusOption_ApplySetting(AbbFrameGetParent(self, 3).GeneralFrame);
 end
 
 
@@ -261,7 +265,7 @@ function AbbreviatedStatusOptionSlider_OnValueChanged(self, value)
         local optionFrame = AbbreviatedStatusOption_GetOptionFrame(self);
         self.value:SetText(format("%.1f", value));
         AbbreviatedStatusSetProfileOption(optionFrame.unit, self.prefix, optionFrame.type, self.optionName, value);
-        AbbreviatedStatusOption_ApplySetting(AbbreviatedStatusOption_GetParent(self).GeneralFrame);
+        AbbreviatedStatusOption_ApplySetting(AbbFrameGetParent(self, 3).GeneralFrame);
     end
 end
 
