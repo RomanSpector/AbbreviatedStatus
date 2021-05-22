@@ -2,7 +2,7 @@ if ( not GetLocale()=="ruRU" ) then
     return;
 end
 
-ABBREVIATED_STATUS_OPTION_VERSION = "Версия : %s";
+ABBREVIATED_STATUS_OPTION_VERSION = "Версия: %s";
 
 ABBREVIATED_STATUS_OPTION_REMAINDER = "Остаток после точки"
 
