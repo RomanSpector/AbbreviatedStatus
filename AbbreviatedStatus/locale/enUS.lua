@@ -34,5 +34,5 @@ THIRD_NUMBER_CAP_NO_SPACE           = "B";
 SECOND_NUMBER_CAP_NO_SPACE          = "M";
 FIRST_NUMBER_CAP_NO_SPACE           = "K";
 
-DEFAULT_ABBREVIATED_STATUS          = "Do you want to reset the default settings of this section or the entire profile?"
-DEFAULT_ABBREVIATED_ALL_PROFILE     = "All profile"
+DEFAULT_ABBREVIATED_STATUS          = "Do you want to reset the default settings of this section or the entire profile?";
+DEFAULT_ABBREVIATED_ALL_PROFILE     = "All profile";

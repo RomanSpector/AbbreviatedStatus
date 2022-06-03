@@ -12,8 +12,8 @@ local DEFAULT_PROFILE = ns:GetDefaultProfile();
 -- ABBREVIATED_STATUS_OPTION_≤OPTION_NAME>
 
 function AbbreviatedStatus:OnInitialize()
-	self.db = AceDB:New("AbbreviatedStatusDB");
-	PROFILE = self.db.global;
+    self.db = AceDB:New("AbbreviatedStatusDB");
+    PROFILE = self.db.global;
 
     if ( not ROMANSPECTOR_DISCORD ) then
         ROMANSPECTOR_DISCORD = true;
@@ -65,7 +65,7 @@ end
 function AbbreviatedStatusOption_DoesNothing() end
 
 function AbbreviatedStatusOption_DefaultCallback(self)
-	AbbreviatedStatusOption_ResetToDefaults();
+    AbbreviatedStatusOption_ResetToDefaults();
 end
 
 function AbbreviatedStatusOption_ResetToDefaults()
@@ -153,20 +153,20 @@ end
 --------------------------------------------------------------
 function AbbreviatedStatusProfileOption_OnLoad(self)
     local parent = AbbreviatedStatusOption;
-	if ( not parent.optionControls ) then
-		parent.optionControls = {};
-	end
+    if ( not parent.optionControls ) then
+        parent.optionControls = {};
+    end
 
-	tinsert(parent.optionControls, self);
+    tinsert(parent.optionControls, self);
 end
 -------------------------------
 -------  Check Button ---------
 -------------------------------
 function AbbreviatedStatusOptionCheckButton_InitializeWidget(self, optionName, array)
-	self.optionName = array;
-	local tag = format("ABBREVIATED_STATUS_OPTION_%s", strupper(optionName));
-	self.label:SetText(_G[tag] or "Need string: "..tag);
-	self.updateFunc = AbbreviatedStatusOptionCheckButton_Update;
+    self.optionName = array;
+    local tag = format("ABBREVIATED_STATUS_OPTION_%s", strupper(optionName));
+    self.label:SetText(_G[tag] or "Need string: "..tag);
+    self.updateFunc = AbbreviatedStatusOptionCheckButton_Update;
 
     self:RegisterEvent("CVAR_UPDATE");
     AbbreviatedStatusProfileOption_OnLoad(self);
@@ -181,8 +181,8 @@ end
 
 function AbbreviatedStatusOptionCheckButton_Update(self)
     local optionFrame = AbbreviatedStatusOption_GetOptionFrame(self);
-	local currentValue = AbbreviatedStatusGetProfileOption(optionFrame.unit, self.prefix, optionFrame.type, self.optionName);
-	self:SetChecked(currentValue);
+    local currentValue = AbbreviatedStatusGetProfileOption(optionFrame.unit, self.prefix, optionFrame.type, self.optionName);
+    self:SetChecked(currentValue);
     AbbreviatedStatusOptionChekButton_SetStatus(self);
     AbbreviatedStatusOption_ApplySetting(AbbFrameGetParent(self, 3).GeneralFrame);
 end
@@ -217,30 +217,30 @@ function AbbreviatedStatusOptionCheckButton_OnClick(self, button, currentValue)
     end
     local optionFrame = AbbreviatedStatusOption_GetOptionFrame(self);
     AbbreviatedStatusOptionChekButton_SetStatus(self);
-	AbbreviatedStatusSetProfileOption(optionFrame.unit, self.prefix, optionFrame.type, self.optionName, self:GetChecked() or false);
+    AbbreviatedStatusSetProfileOption(optionFrame.unit, self.prefix, optionFrame.type, self.optionName, self:GetChecked() or false);
     AbbreviatedStatusOption_ApplySetting(AbbFrameGetParent(self, 3).GeneralFrame);
 end
 -------------------------------
 ------- Slider ----------------
 -------------------------------
 function AbbreviatedStatusOptionSlider_InitializeWidget(self, optionName, minText, maxText, updateFunc)
-	self.optionName = optionName;
-	local tag = format("ABBREVIATED_STATUS_OPTION_%s", strupper(optionName));
-	self.label:SetText(_G[tag] or "Need string: "..tag);
+    self.optionName = optionName;
+    local tag = format("ABBREVIATED_STATUS_OPTION_%s", strupper(optionName));
+    self.label:SetText(_G[tag] or "Need string: "..tag);
     if ( minText ) then
-		self.lowLable:SetText(minText);
-	end
-	if ( maxText ) then
-		self.maxLable:SetText(maxText);
-	end
+        self.lowLable:SetText(minText);
+    end
+    if ( maxText ) then
+        self.maxLable:SetText(maxText);
+    end
 
-	self.updateFunc = updateFunc or AbbreviatedStatusOptionSlider_Update;
+    self.updateFunc = updateFunc or AbbreviatedStatusOptionSlider_Update;
     AbbreviatedStatusProfileOption_OnLoad(self);
 end
 
 function AbbreviatedStatusOptionSlider_Update(self)
     local optionFrame = AbbreviatedStatusOption_GetOptionFrame(self);
-	local currentValue = AbbreviatedStatusGetProfileOption(optionFrame.unit, self.prefix, optionFrame.type, self.optionName);
+    local currentValue = AbbreviatedStatusGetProfileOption(optionFrame.unit, self.prefix, optionFrame.type, self.optionName);
     self.value:SetText(format("%.1f", currentValue));
     self:SetValue(currentValue);
     AbbreviatedStatusOption_ApplySetting(AbbFrameGetParent(self, 3).GeneralFrame);
@@ -330,10 +330,10 @@ function AbbreviatedStatusOption_GetGeneralValue(optionName)
 end
 
 function AbbreviatedStatusOption_UpdateCurrentPanel()
-	local panel = AbbreviatedStatusOption;
-	for i=1, #panel.optionControls do
-		panel.optionControls[i]:updateFunc();
-	end
+    local panel = AbbreviatedStatusOption;
+    for i=1, #panel.optionControls do
+        panel.optionControls[i]:updateFunc();
+    end
 end
 
 function AbbreviatedStatusOption_UpdateUnits(self)
@@ -392,7 +392,7 @@ function AbbreviatedStatusOption_GetStatusBarType(bar)
     if not ( bar and bar.GetName ) then
         return;
     end
-    local barType = ((bar:GetName()):match("HealthBar")) or "manabar";
+    local barType = bar:GetName():match("HealthBar") or "manabar";
     return strlower(barType);
 end
 
